@@ -1,0 +1,155 @@
+<!DOCTYPE html>  <html> <head>   <title>importPanel.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="anlegenPanel.html">                 anlegenPanel.coffee               </a>                                           <a class="source" href="benchmark.html">                 benchmark.coffee               </a>                                           <a class="source" href="benchmark_greedyparameter.html">                 benchmark_greedyparameter.coffee               </a>                                           <a class="source" href="configurationPanel.html">                 configurationPanel.coffee               </a>                                           <a class="source" href="controlPanel.html">                 controlPanel.coffee               </a>                                           <a class="source" href="demo.html">                 demo.coffee               </a>                                           <a class="source" href="demoPanel.html">                 demoPanel.coffee               </a>                                           <a class="source" href="flot.html">                 flot.coffee               </a>                                           <a class="source" href="floyd.html">                 floyd.coffee               </a>                                           <a class="source" href="gmaps.html">                 gmaps.coffee               </a>                                           <a class="source" href="greedyWorker.html">                 greedyWorker.coffee               </a>                                           <a class="source" href="importPanel.html">                 importPanel.coffee               </a>                                           <a class="source" href="init.html">                 init.coffee               </a>                                           <a class="source" href="jit.html">                 jit.coffee               </a>                                           <a class="source" href="parse.html">                 parse.coffee               </a>                                           <a class="source" href="routePanel.html">                 routePanel.coffee               </a>                                           <a class="source" href="startPanel.html">                 startPanel.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="viz.html">                 viz.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               importPanel.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h1>#</h1>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">importPanel</span><span class="p">.</span><span class="nx">coffee</span> <span class="o">-</span> <span class="nx">Men</span><span class="err">ü</span><span class="nx">f</span><span class="err">ü</span><span class="nx">hrung</span> <span class="nx">f</span><span class="err">ü</span><span class="nx">r</span> <span class="nx">Daten</span><span class="o">-</span><span class="nx">Import</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h1>#</h1>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize = </span><span class="nb">window</span><span class="p">.</span><span class="nx">Shoptimize</span>
+<span class="nv">root = </span><span class="k">this</span>
+
+<span class="nv">data =</span>
+    <span class="nv">distances     : </span><span class="p">[]</span>
+    <span class="nv">prices        : </span><span class="p">[]</span>
+    <span class="nv">shops         : </span><span class="p">[]</span>
+    <span class="nv">quantities    : </span><span class="p">[]</span>
+    <span class="nv">articles      : </span><span class="p">[]</span>
+    <span class="nv">floydWarshall : </span><span class="kc">null</span>
+
+<span class="nv">isDistanceDataValid = </span><span class="kc">false</span>
+<span class="nv">isArticleDataValid = </span><span class="kc">false</span>
+
+<span class="nv">invalidateData = </span><span class="o">-&gt;</span>
+    <span class="nv">isDistanceDataValid = </span><span class="kc">false</span>
+    <span class="nv">isArticleDataValid = </span><span class="kc">false</span>
+
+<span class="nv">timeout = </span><span class="kc">false</span>
+<span class="nv">isShowingDefectsAtTheMoment = </span><span class="kc">true</span>
+
+<span class="nv">showDefects = </span><span class="nf">(message) -&gt;</span>
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">isShowingDefectsAtTheMoment</span>
+        <span class="k">return</span>
+
+    <span class="nv">isShowingDefectsAtTheMoment = </span><span class="kc">false</span>
+    <span class="nx">clearTimeout</span> <span class="nx">timeout</span>
+    <span class="nv">timeout = </span><span class="nx">after</span> <span class="mi">2000</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="nv">isShowingDefectsAtTheMoment = </span><span class="kc">true</span>
+
+    <span class="nv">elem = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;fehler&#39;&gt;#{message}&lt;/div&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">prependTo</span><span class="p">(</span><span class="s2">&quot;#fehlerBox&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+    <span class="nx">after</span> <span class="mi">3500</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="nx">elem</span><span class="p">.</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+        
+
+<span class="nv">parseDistanceData = </span><span class="o">-&gt;</span>
+
+    <span class="nv">distanceData = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#distanceFileInput&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nv">result = </span><span class="nx">parseDistancesCSV</span> <span class="nx">distanceData</span>
+    <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">error</span><span class="o">?</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#distanceFileStatus&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;invalid&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+        <span class="nv">isDistanceDataValid = </span><span class="kc">false</span>
+        <span class="nx">showDefects</span> <span class="nx">result</span><span class="p">.</span><span class="nx">error</span>
+    <span class="k">else</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#distanceFileStatus&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;invalid&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+        <span class="nv">isDistanceDataValid = </span><span class="kc">true</span>
+        <span class="nv">data.distances = </span><span class="nx">result</span><span class="p">.</span><span class="nx">matrix</span>
+        <span class="nv">data.shops = </span><span class="nx">result</span><span class="p">.</span><span class="nx">shops</span>
+
+    <span class="nx">showProceedButton</span><span class="p">()</span>
+
+<span class="nv">parseArticleData = </span><span class="o">-&gt;</span>
+   
+    <span class="nv">articleData = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#articleFileInput&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nv">result = </span><span class="nx">parsePricesCSV</span> <span class="nx">articleData</span>
+    <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">error</span><span class="o">?</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#articleFileStatus&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;invalid&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+        <span class="nv">isArticleDataValid = </span><span class="kc">false</span>
+        <span class="nx">showDefects</span> <span class="nx">result</span><span class="p">.</span><span class="nx">error</span>
+    <span class="k">else</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#articleFileStatus&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;invalid&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;valid&#39;</span><span class="p">)</span>
+        <span class="nv">isArticleDataValid = </span><span class="kc">true</span>
+        <span class="nv">data.prices = </span><span class="nx">result</span><span class="p">.</span><span class="nx">matrix</span>
+        <span class="nv">data.quantities = </span><span class="nx">result</span><span class="p">.</span><span class="nx">quantities</span>
+        <span class="nv">data.articles = </span><span class="nx">result</span><span class="p">.</span><span class="nx">articles</span>
+
+    <span class="nx">showProceedButton</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Die Funktion <code>readShopFile</code> ist dafür zuständig, dass
+die Artikeldateien analysiert und angezeigt werden.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">readDistanceFile = </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">fileReader = </span><span class="k">new</span> <span class="nx">FileReader</span><span class="p">()</span>
+    <span class="nv">file = </span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nv">fileReader.onload = </span><span class="nf">(event) -&gt;</span>
+        <span class="nv">distanceDataText = </span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">result</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#distanceFileInput&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">distanceDataText</span><span class="p">)</span>
+        <span class="nx">parseDistanceData</span><span class="p">()</span>
+
+    <span class="nx">fileReader</span><span class="p">.</span><span class="nx">readAsText</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Die Funktion <code>readArticleFile</code> ist dafür zuständig, dass
+die Artikeldateien analysiert und angezeigt werden.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">readArticleFile = </span><span class="nf">(event) -&gt;</span>
+    <span class="nv">fileReader = </span><span class="k">new</span> <span class="nx">FileReader</span><span class="p">()</span>
+    <span class="nv">file = </span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nv">fileReader.onload = </span><span class="nf">(event) -&gt;</span>
+        <span class="nv">articleDataText = </span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">result</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#articleFileInput&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">articleDataText</span><span class="p">)</span>
+        <span class="nx">parseArticleData</span><span class="p">()</span>
+
+    <span class="nx">fileReader</span><span class="p">.</span><span class="nx">readAsText</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span>
+
+<span class="nv">showProceedButton = </span><span class="o">-&gt;</span>
+
+    <span class="k">if</span> <span class="nx">isDistanceDataValid</span> <span class="o">and</span> <span class="nx">isArticleDataValid</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#proceedButton&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+    <span class="k">else</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#proceedButton&quot;</span><span class="p">).</span><span class="nx">fadeOut</span><span class="p">()</span>
+
+<span class="nv">cleanUp = </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#mouseOver&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#homeButton&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.import&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
+<span class="nv">Shoptimize.ImportPanel = </span><span class="o">-&gt;</span>
+    <span class="nx">install</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">Shoptimize</span>
+    <span class="nx">invalidateData</span><span class="p">()</span>
+
+    <span class="nx">replaceMessage</span><span class="p">(</span><span class="s2">&quot;Bitte laden Sie die Daten für &lt;b&gt;Geschäfte und Artikel&lt;/b&gt;!&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Daten für die Wegkosten</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;textarea id=&#39;distanceFileInput&#39; class=&#39;import&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;keyup&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">parseDistanceData</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;status invalid import&#39; id=&#39;distanceFileStatus&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Wegkosten geladen&quot;</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;input type=&#39;file&#39; id=&#39;distanceFileLoader&#39; class=&#39;import&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="nf">(ev) -&gt;</span>
+            <span class="nx">readDistanceFile</span> <span class="nx">ev</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Daten für die Artikel</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;status invalid import&#39; id=&#39;articleFileStatus&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Artikelkosten geladen&quot;</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;textarea id=&#39;articleFileInput&#39; class=&#39;import&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;keyup&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">parseArticleData</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;input type=&#39;file&#39; id=&#39;articleFileLoader&#39; class=&#39;import&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="nf">(ev) -&gt;</span>
+            <span class="nx">readArticleFile</span> <span class="nx">ev</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;button iconButton&#39; id=&#39;homeButton&#39;&gt;Zurück&lt;/div&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">cleanUp</span><span class="p">()</span>
+            <span class="nx">StartPanel</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;import&#39; id=&#39;fehlerBox&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.import, #homeButton&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;button iconButton import&#39; id=&#39;proceedButton&#39;&gt;Weiter&lt;/div&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#mouseOver&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="nx">cleanUp</span><span class="p">()</span>
+            <span class="nx">ControlPanel</span> <span class="nx">data</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

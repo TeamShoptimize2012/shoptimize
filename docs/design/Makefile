@@ -1,0 +1,10 @@
+design.pdf: design.tex *.tikz
+	pdflatex $< 
+	bibtex $(basename $<) 
+	pdflatex $< 
+	pdflatex $<
+
+clean:
+	rm -f *.pdf *.aux *.bbl *.auxbbl.make *.auxbbl.make.temp  *.log *.blg *.toc *.out *.aux.make *.auxtarget.make *.d *.fls
+
+.PHONY: clean

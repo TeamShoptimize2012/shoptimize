@@ -1,0 +1,160 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\usepackage[left=2.5cm, right=3cm]{geometry}              % flexible and complete interface to document dimensions
+\usepackage[latin1]{inputenc}                             % font encoding for umlauts
+\usepackage[ngerman]{babel}                               % language settings
+\usepackage[T1]{fontenc}                                  % T1 font encoding
+\usepackage{amsmath}                                      % AMS mathematical facilities
+%\usepackage{amssymb}                                     % defines symbol names for math symbols in the fonts MSAM and MSBM
+\usepackage[bitstream-charter]{mathdesign}                % mathematical fonts to fit with Bitstream Charter
+\usepackage{courier}                                      % replaces the current typewriter font for Adobe Courier
+\usepackage{listings}                                     % source code printer
+\usepackage{color}                                        % adding colors
+\usepackage{fancyhdr}                                     % extensive control of page headers and footers
+\usepackage{booktabs}                                     % publication quality tables
+\usepackage{xcolor}                                       % driver-independent color extensions   
+\usepackage{tikz}                                         % creating graphics programmatically
+\usepackage{float}                                        % improved interface for floating objects
+\usepackage{subfig}                                       % figures broken into subfigures
+\usepackage{algorithmic}                                  % a suite of tools for typesetting algorithms in pseudo-code.
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}      % floating algorithm environment with algorithmic keywords
+
+\definecolor{lightgray}{rgb}{.95,.95,.95}
+
+\lstset{backgroundcolor=\color{lightgray},
+        basicstyle=\ttfamily\fontsize{9pt}{9pt}\selectfont\upshape,
+				commentstyle=\rmfamily\slshape,
+				keywordstyle=\rmfamily\bfseries\color{black},
+				captionpos=b,
+				showstringspaces=false,
+				breaklines=true,
+				frame=lines,
+				tabsize=2,
+				aboveskip={\baselineskip}
+}
+
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\renewcommand{\labelenumii}{(\alph{enumii})}
+
+\subject{Qualitätssicherung}
+\title{shoptimize}
+\author{Julian Fleischer $\cdot$ Konrad Reiche $\cdot$ Sören Titze $\cdot$ André Zoufahl}
+\date{\today}
+\publishers{\vskip 2ex InformatiCup 2012}
+
+\begin{document}
+
+\pagestyle{fancy}
+\maketitle
+
+Für die Qualitätssicherung unserer Anwendung haben wir vor zwei Werkzeuge verwendet. Zum einem Unit Tests um eigenständige Module unserer Anwendung auf Korrekheit überprüfen können und zum anderen ein selbst geschriebenes Werkzeug um dem Algorithmus automatisiert durchzutesten: Benchmark. Der Benchmark dient zum einen dazu die Güte des Algorithmus einzordnen, d.h. wie optimal sind die Ergebnisse und zum anderen, um eine geeignete Parameterwahl für den Algorithmus zu finden. Gleichzeitig wird er aber auch zum Messen der tatsächlichen Ausführungszeit verwendet.
+
+\section{Testdaten}
+
+Zu Beginn des Projektes haben wir uns mit verschiedenen Arbeiten außeinandergesetzt, die das \emph{Traveling Purchase Problem} behandelt haben. Einige dieser Arbeiten haben eine Testdatenbibliothek verwendet. Diese Bibliothek besteht aus $100$ Testdaten mit großen Eingabemengen, d.h. $50$ bis $200$ Geschäfte bzw. Artikel, sowie deren optimale Lösung. Insbesondere die optimale Lösungen sind wertvoll, da diese genutzt werden können um die Güte des Algorithmus zu bewerten. Die Testdaten waren der Anlass den Benchmark zu entwickeln, um diese automatisiert auf den Algorithmus testen zu können. Dafür wurden Skripte geschrieben, die das Format der Testdatenbibliothek in das Format von der Aufgabenstellung des InformatiCups überführt.
+
+\section{Benchmark}
+
+\subsection{Güte des Algorithmus}
+
+Für die Güte des Algorithmus werden die Ergebnisse der Gesamtkosten die der Algorithmus zurückliefert mit den optimalen Gesamtkosten der Testdaten vergleichen. Das ist auch durch den Graphen visualisiert: Die orange Kurve ist das Ergebnis des Algorithmus und die blaue Kurve ider der optimale Wert.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{images/benchmark-1.png}
+\caption{Benchmark}
+\label{fig:benchmark}
+\end{figure}
+
+Zusätzliche Informationen sind:
+
+\begin{itemize}
+\item Anzahl der Geschäfte
+\item Anzahl der Artikel
+\item Optimaler Kostenwert
+\item Kostenwert berechnet durch den Algorithmus
+\item Verhältnis zwischen berechneter und optimaler Lösung (Güte)
+\item Artikelkosten der berechneten Route
+\item Reisekosten der berechneten Route
+\item Anzahl der besuchten Märkte in der optimalen Lösung
+\item Anzahl der besuchten Märkte in der berechneten Lösung
+\item Laufzeit in Millisekunden
+\end{itemize}
+
+Einige Ergebnisse sind im Folgenden dargestellt. Das optimale Ergebnisse hat die Qualität $1.0$. Die Ergebnisse machen deutlich, dass es sich rentiert eine höhere Anzahl von Iterationen zu investieren, um ein besseres Gesamtergebnis zu erzielen. Dies geht jedoch nur auf Kosten der Zeit.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{crcccccr}
+\toprule
+Test ID & Iterationen & $|G|$ & $|A|$ & Optimale Kosten & Berechnete Kosten & Qualität & Laufzeit\\
+\midrule
+$1$       & $3$           & $50$    & $50$    & $1856$            & $2591$              & $\times 1,4$ & $52$ ms\\
+$1$       & $30$          & $50$    & $50$    & $1856$            & $2300$              & $\times 1,24$ & $243$ ms\\
+$1$       & $300$         & $50$    & $50$    & $1856$            & $2160$              & $\times 1,16$ & $1.954$ ms\\
+$1$       & $3.000$       & $50$    & $50$    & $1856$            & $2000$              & $\times 1,08$ & $19.807$ ms\\
+\bottomrule
+\end{tabular}
+\caption{Investierte Zeit (Iterationen) liefern bessere Ergebnisse}
+\end{table}
+
+\begin{figure}
+\centering
+\includegraphics[width=1.0\textwidth]{images/many-iterations.png}
+\caption{Testdaten mit vielen Iterationen, die Ergebnisse sind sehr nahe an der optimalen Lösung}
+\label{fig:shopt_bench_2_finegrained}
+\end{figure}
+
+\subsection{Parameterfindung}
+
+Ein weiterer Aspekt der Qualitätssicherung ist die richte Konfiguration des Algorithmus. Es gibt mitunter sehr schlechte Einstellungen der Parameter die zu unzureichenden Ergebnissen führen. Wie im Entwurfsdokument beschrieben, haben wir für die 4 Vereinfachungen sowie für den allgemeinen Fall bereits Parameter vorgegeben die für das jeweilige Szenario die besten Ergebnisse liefert. Es ist wichtig zu verstehen, auf welche Schritte im Algorithmus sich die Parameter auswirken. So habt zum Beispiel \emph{Early Purchase} nichts mit der initialen Entscheidung zu tun welches Geschäft man besucht sondern wird dann relevant wenn man bei einem gewissen Geschäft ist. \\
+Um nun ein allgemeines Bild dafür zu bekommen, wir die Parameter mitunter zusammen wirken wurde ein weiterer Benchmark entwickelt der dabei helfen soll, eine geeignete Parameterisierung zu finden. \\
+Dabei wird nur ein Testdatensatz untersucht und alle möglichen Parameteriserungen darauf ausgeführt. Um jedoch die benötigte Zeit zu reduzieren ist es auch möglich nur einzelne Parameter zu testen (dies ist besonders für die Feineinstellung sehr hilfreich). \\
+
+\paragraph{Beispiel: mögliche Parameter für hohe Fahrtkosten im Vergleich zu den Artikelpreisen}
+Im folgenden wird gezeigt man iterativ die Parameter verbessert. Bevor wir den Benchmark nutzen einige Vermutungen. \\
+Für den Fall, dass hohe Fahrtkosten bestehen ist eine gute Route dadurch gekennzeichnet, dass weniger Geschäfte besucht werden und dafür aber Artikel eingekauft werden, die es eigentlich woanders günstiger geben würde. Es ist also wichtig Artikel in mehreren Geschäften zu suchen, für die Parameter würde dies bedeuten, dass wir \emph{TA} und \emph{AA} auf einen Wert zwischen 50 und 100 setzen werden um genau diese Mehrfachsuche zu erreichen. Für TS haben wir noch keine konkrete Idee, daher wäre ein Benchmark sicherlich hilfreich. Schließlich in einem Geschäft angekommen, sollten wir auch noch nach weiteren Artikeln suchen, die günstig sind, was nichts anderes bedeutet, dass auch EP nicht 0 sein wird. \\
+
+Das erste was wir tun, ist uns einen groben Überblick zu verschaffen. Dazu lassen wird jeder Parameter von 0 bis 100 mit einer Schrittgröße von 10 getestet. Pro Parameter sind es elf Werte, somit werden $11^4 = 14641$ Tests durchgeführt. Um die Varianz klein zu halten, wird jede Parameterisierung 20 mal getestet und das beste Ergebnis gewertet. (Abb: \ref{fig:shopt_bench_2_finegrained}) \\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{images/shopt_bench_2_finegrained.png}
+\caption{Erster Überblick über alle Parameterisierungen}
+\label{fig:shopt_bench_2_finegrained}
+\end{figure}
+
+Zunächst kann man sagen, dass die Ergebnisse stark streuen, wie zu erwarten gibt es Konfigurationen die gute und welche die schlechte Ergebnisse liefern. Besonders interessant ist das Kammmuster, welches die Punkte beschreiben. Wichtig ist noch zu wissen wie die Parameter verändert werden, um zu verstehen, welcher Parameter das Muster erzeugt. Zunächst wird TA innerhalb der Grenzen erhöht und dann zurückgesetzt und AA wird einmalig erhöht und alles wiedrholt. Sobald AA maximal ist, wird auch AA zurückgesetzt und TS einmalig erhöht, und analog dazu dann EP. Anders ausgrückt werden die ersten $1331(11^3)$ Test mit $EP=0$ ausgeführt, danach weitere $1331$ mit $EP=10$, usw. \\
+Daher sind diese Zacken durch EP hervorgerufen, bzw. das Zurücksetzen der anderen Parameter auf 0. Jeder Zacken ist dadurch definiert, dass die ersten 3 Parameter schrittweise erhöht werden, bis schlussendlich alle 3 auf 100 sind. Danach wird EP erhöht und ein neuer Zacken entsteht. Zu bemerken ist, dass die Kämme mit steigendem EP niedrieger werden, was nur logisch ist, da durch früheren Einkauf der Artikel weniger Fahrtkosten entstehen. Da wir uns jedoch für die niedrigsten Preise interssieren und in diesem Fall mehrere Kämme gleichgute Routen liefern (daran zu sehen, dass in jedem Kamm Punkte gibt die nah an den minimalen Kosten liegen), haben uns daher entschieden Kamm mit EP=50 genauer zu betrachten. Wir verzichten also vorerst auf eine weitere Analyse von EP da im Bereich von 20 bis 60 gleichgute Ergebnisse geliefert werden.\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{images/shopt_bench_3_fixedEP.png}
+\caption{Detailansicht des Tests bei EP=50}
+\label{fig:shopt_bench_3_fixedEP}
+\end{figure}
+
+Wie in Abbildung \ref{fig:shopt_bench_3_fixedEP} zu sehen, plotten wir nur noch einen Kamm aus Abbildung \ref{fig:shopt_bench_2_finegrained}. Analog zur ersten Analyse können wir die resultierenden Daten in Blöcke zusammenfassen mit gleichen Eigenschaften. Da diesmal TS als \emph{letzter} Parameter erhöht wird, sind die Blöcke dadurch definiert, dass $TS=0,10,20,...$ ist. \\
+Im ersten Interval ist der Graph konstant, da wir TS=0 haben und somit faktisch immer die besten Shops wählen. Im mittleren Teil variiert der Graph aufgrund der Auswahl von guten und schlechten Shops. Im hinteren Abschnitt steigt was darauf schließen lässt, dass ein zu hoher Wert für TS dafür sorgt, dass überwiegend schlechte Shops besucht werden und somit die Route im allgemeinen von schlechter Qualität zeugt. \\
+Für uns interessant ist also nur der Bereich im Bereich $10 \leq TS \leq 30$. Im folgenden haben wir den Bereich noch weiter eingeschränkt und als dritten Test die Parameter TS=20 und EP=50 gesetzt. \\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{images/shopt_bench_4_fixedTSEP.png}
+\caption{Detailansicht des Tests bei TS=20, EP=50}
+\label{fig:shopt_bench_4_fixedTSEP}
+\end{figure}
+
+In diesem Test gibt es keine markanten Muster mehr, jedoch fällt der Messpunkt an Stelle 85 auf, dessen Ergebnis nur $1,05$ teurer ist als die optimale Lösung. In einem späteren Benchmark im Bereich EP=100 haben wir ebenfalls ähnliche Ergebnisse erhalten und haben uns schlussendlich für eine andere Parametersierug entschieden. Für dieses Szenario nutzen wir in der Software TA=100, AA=60, TS=0 und EP=100. \\
+
+\subsection{Laufzeit}
+
+Die Laufzeit in Abhängigkeit zur Eingabemenge ist im Folgenden dargestellt. Die Eingabemengen Anzahl Artikel und Anzahl Geschäfte werden seperat betrachtet:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth]{images/running-time.png}
+\caption{Gemessene Laufzeit in Abhängigkeit zur Eingabemenge}
+\label{fig:running-time}
+\end{figure}
+
+\end{document}

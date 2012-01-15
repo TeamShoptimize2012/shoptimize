@@ -1,0 +1,129 @@
+/**
+ * Style-Regeln die nur vom Neue-Daten-Anlegen-Panel benutzt werden.
+ */
+
+.editData {
+    position: absolute;
+}
+
+.editData.tile, .editDistances.tile {
+    position: absolute;
+    width: 48px; height: 48px;
+}
+
+.editData.addButton {
+    cursor: pointer;
+    background-image: url("icons/add-48.png");
+}
+
+.editData.hint {
+    font: 32px/48px "Helvetica", "Arial", sans-serif;
+    color: silver;
+}
+
+.editData.hint.toTheLeft {
+    background-image: url("icons/triangle-left-48.png");
+    padding-left: 58px;
+    font: 32px/48px;
+    height: 48px;
+    width: 500px;
+}
+
+.editData.chooseIconPane {
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    background: white;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-top: -10px;
+    margin-left: -10px;
+    padding: 10px;
+    font: 16px/18px "Helvetica", "Arial", sans-serif;
+}
+
+.editData.tile.shopIcon.no1 {
+    background-image: url("icons/shop1-48.png");
+}
+
+.editData.tile.shopIcon.no2 {
+    background-image: url("icons/shop2-48.png");
+}
+
+.editData.tile.shopIcon.no3 {
+    background-image: url("icons/shop3-48.png");
+}
+
+.editData.tile.shopIcon.no4 {
+    background-image: url("icons/shop4-48.png");
+}
+
+.editData.tile.shopIcon.no5 {
+    background-image: url("icons/shop5-48.png");
+}
+
+.editData.tile.shopIcon.no6 {
+    background-image: url("icons/shop6-48.png");
+}
+
+.editData.tile.shopIcon.no7 {
+    background-image: url("icons/shop7-48.png");
+}
+
+.editData.chooseIcon {
+    cursor: pointer;
+}
+
+.editData.noPic:after {
+    display: block; position: absolute;
+    top: 0; left: 0;
+    width: 48px; height: 48px;
+    content: "?";
+    font: 48px/48px "Helvetica", "Arial", sans-serif;
+    background: transparent; color: silver;
+    text-align: center;
+}
+
+.editData.weiter.button, .editDistances.weiter.button {
+    position: absolute;
+
+    background-image: url("icons/go-right-48.png");
+    background-position: right center;
+    text-align: right;
+
+    padding-right: 68px !important;
+    left: 690px;
+    width: 150px;
+}
+
+.editData.weiter.button {
+    top: 522px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    height: 48px;
+    line-height: 48px;
+}
+
+.editData.tile.textInput,
+.editDistances.tile.textInput,
+.editDistances.tile.pendant {
+    height: 46px;
+    text-align: right;
+    font-size: 18px;
+}
+
+.editDistances.pendant {
+    border-bottom: none;
+    height: 48px;
+    line-height: 48px;
+}
+
+.editDistances.helpText {
+    top: 200px;
+    left: 550px;
+    width: 350px;}
+
+.editDistances.weiter.button {
+    top: 500px;
+}
+

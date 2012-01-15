@@ -1,0 +1,53 @@
+/**
+ * Style-Regeln die vom Import-Panel benutzt werden.
+ */
+
+.status {
+    top: 140px;
+    left: 50%;
+    padding-left: 68px;
+    font: 24px/68px "Helvetica", "Arial", sans-serif;
+    background-position: 10px 10px;
+}
+
+.status.invalid { background-image: url("icons/cancel-48.png"); }
+.status.valid { background-image: url("icons/accept-48.png"); }
+
+.import { position: absolute; }
+
+textarea.import {
+    width: 300px; height: 200px;
+    top: 260px; left: 50%;
+}
+
+input[type="file"].import {
+    top: 220px;
+    left: 50%;
+}
+
+#proceedButton {
+    left: 50%; bottom: 0;
+    width: 200px; height: 68px;
+    margin-left: -100px;
+    font : 32px/68px "Helvetica", "Arial", sans-serif;
+    cursor: pointer;
+    background-image: url("icons/go-right-48.png");
+}
+
+#proceedButton:hover {
+    background-color: #EEE;
+}
+
+#distanceFileLoader, #distanceFileInput, #distanceFileStatus {
+    margin-left : -350px;
+}
+
+.import#fehlerBox {
+    top: 480px; left: 50%;
+    width: 600px; margin-left: -300px;
+}
+
+.import#fehlerBox .fehler {
+    font: 16px/24px "Helvetica", "Arial", sans-serif;
+    color: #C00;
+}

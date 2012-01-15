@@ -1,0 +1,373 @@
+<!DOCTYPE html>  <html> <head>   <title>demo.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="anlegenPanel.html">                 anlegenPanel.coffee               </a>                                           <a class="source" href="benchmark.html">                 benchmark.coffee               </a>                                           <a class="source" href="benchmark_greedyparameter.html">                 benchmark_greedyparameter.coffee               </a>                                           <a class="source" href="configurationPanel.html">                 configurationPanel.coffee               </a>                                           <a class="source" href="controlPanel.html">                 controlPanel.coffee               </a>                                           <a class="source" href="demo.html">                 demo.coffee               </a>                                           <a class="source" href="demoPanel.html">                 demoPanel.coffee               </a>                                           <a class="source" href="flot.html">                 flot.coffee               </a>                                           <a class="source" href="floyd.html">                 floyd.coffee               </a>                                           <a class="source" href="gmaps.html">                 gmaps.coffee               </a>                                           <a class="source" href="greedyWorker.html">                 greedyWorker.coffee               </a>                                           <a class="source" href="importPanel.html">                 importPanel.coffee               </a>                                           <a class="source" href="init.html">                 init.coffee               </a>                                           <a class="source" href="jit.html">                 jit.coffee               </a>                                           <a class="source" href="parse.html">                 parse.coffee               </a>                                           <a class="source" href="routePanel.html">                 routePanel.coffee               </a>                                           <a class="source" href="startPanel.html">                 startPanel.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="viz.html">                 viz.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               demo.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><strong>demo.coffee</strong>
+Diese Datei enthält alle von der Anwendung verwendeten
+Testdaten
+Alle hier aufgelisteten Datenkonstrukte verwenden einige
+oder alle folgende Typen:
+*shops: Liste aller in dem Datensatz vorkommender Orte
+*distanes: Matrix aller Entfernungen aller Orte untereinander;
+-1 bedeutet, dass keine Direkte Verbindung vorhanden ist
+*allDistances: wie distances;
+es werden aber fehlende Einträge durch den Floyd-Warshall Algorithmus
+ergänzt
+*articles: Liste aller zu kaufenden Artikel
+*prices: Matrix aller Preise aller Artikel in allen Geschäften;
+-1 bedeutet, dass der Artikel nicht in dem Geschäft zu kaufen ist
+*history: Eine liste aller Ereignisse,
+die durch die Erklär-Animation verwendet wird.
+Das sind Testdaten zum Debuggen.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nv">Shoptimize.sampleData5 = </span><span class="p">{</span>
+    <span class="nv">shops: </span><span class="p">[</span><span class="s2">&quot;zu Hause&quot;</span><span class="p">,</span> <span class="s2">&quot;Rewe&quot;</span><span class="p">,</span> <span class="s2">&quot;NETTO&quot;</span><span class="p">,</span> <span class="s2">&quot;Lidl&quot;</span><span class="p">,</span> <span class="s2">&quot;Real&quot;</span><span class="p">,</span> <span class="s2">&quot;Kaisers&quot;</span><span class="p">]</span>
+    <span class="nv">distances: </span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+    <span class="nv">allDistances: </span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+    <span class="nv">articles: </span><span class="p">[</span><span class="s2">&quot;Zucker&quot;</span><span class="p">,</span> <span class="s2">&quot;Brot&quot;</span><span class="p">,</span> <span class="s2">&quot;Gitarre&quot;</span><span class="p">,</span> <span class="s2">&quot;Atombombe&quot;</span><span class="p">,</span> <span class="s2">&quot;Mikrofon&quot;</span><span class="p">,</span> <span class="s2">&quot;Diamant&quot;</span><span class="p">,</span> <span class="s2">&quot;MacBook&quot;</span><span class="p">,</span> <span class="s2">&quot;Malzbier&quot;</span><span class="p">,</span> <span class="s2">&quot;Monitor&quot;</span><span class="p">,</span> <span class="s2">&quot;Frisch gepresster Orangensaft&quot;</span><span class="p">]</span>
+    <span class="nv">prices: </span><span class="p">[</span>
+        <span class="p">[</span><span class="mf">14.95</span><span class="p">,</span> <span class="mf">16.99</span><span class="p">,</span> <span class="mf">11.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">4.99</span><span class="p">,</span> <span class="mf">4.59</span><span class="p">,</span> <span class="mf">4.99</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">12.9</span><span class="p">,</span> <span class="mf">11.99</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">5.99</span><span class="p">,</span> <span class="mf">4.55</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">19.9</span><span class="p">,</span> <span class="mf">19.95</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mi">17</span><span class="p">]</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">8.19</span><span class="p">,</span> <span class="mf">7.99</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">5.99</span><span class="p">,</span> <span class="mf">4.55</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">19.9</span><span class="p">,</span> <span class="mf">19.95</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">17</span><span class="p">]</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">8.19</span><span class="p">,</span> <span class="mf">7.99</span><span class="p">,</span> <span class="mf">10.85</span><span class="p">,</span> <span class="mf">9.15</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">5.99</span><span class="p">,</span> <span class="mf">4.55</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">]]</span>
+    <span class="nv">history: </span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nv">di: </span><span class="p">[</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="nv">si: </span><span class="p">[</span><span class="mi">42</span><span class="p">,</span><span class="mi">1337</span><span class="p">,</span><span class="mi">4711</span><span class="p">,</span><span class="mi">1012</span><span class="p">,</span><span class="mi">1111</span><span class="p">]</span>
+            <span class="nv">prevLoc: </span><span class="mi">0</span>
+            <span class="nv">nextLoc: </span><span class="mi">2</span>
+        <span class="p">}</span>
+        <span class="p">{</span>
+            <span class="nv">di: </span><span class="p">[</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+                <span class="kc">null</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="nv">si: </span><span class="p">[</span><span class="mi">42</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="mi">4711</span><span class="p">,</span><span class="mi">1012</span><span class="p">,</span><span class="mi">1111</span><span class="p">]</span>
+            <span class="nv">prevLoc: </span><span class="mi">2</span>
+            <span class="nv">nextLoc: </span><span class="mi">3</span>
+        <span class="p">}</span>
+        <span class="p">{</span>
+            <span class="nv">di: </span><span class="p">[</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+                <span class="kc">null</span>
+                <span class="kc">null</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="nv">si: </span><span class="p">[</span><span class="mi">42</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="mi">1012</span><span class="p">,</span><span class="mi">1111</span><span class="p">]</span>
+            <span class="nv">prevLoc: </span><span class="mi">3</span>
+            <span class="nv">nextLoc: </span><span class="mi">5</span>
+        <span class="p">}</span>
+        <span class="p">{</span>
+            <span class="nv">di: </span><span class="p">[</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+                <span class="kc">null</span>
+                <span class="kc">null</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="nv">si: </span><span class="p">[</span><span class="mi">42</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="mi">1012</span><span class="p">]</span>
+            <span class="nv">prevLoc: </span><span class="mi">5</span>
+            <span class="nv">nextLoc: </span><span class="mi">4</span>
+        <span class="p">}</span>
+        <span class="p">{</span>
+            <span class="nv">di: </span><span class="p">[</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="nv">si: </span><span class="p">[</span><span class="mi">1012</span><span class="p">]</span>
+            <span class="nv">prevLoc: </span><span class="mi">4</span>
+            <span class="nv">nextLoc: </span><span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Das sind die Testdaten zum Erklären des Algorithmus.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nv">Shoptimize.sampleData = </span><span class="p">{</span>
+    <span class="nv">shops: </span><span class="p">[</span><span class="s2">&quot;g1&quot;</span><span class="p">,</span> <span class="s2">&quot;g2&quot;</span><span class="p">,</span> <span class="s2">&quot;g3&quot;</span><span class="p">]</span>
+    <span class="nv">home: </span><span class="s2">&quot;g0&quot;</span>
+    <span class="nv">distances: </span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+    <span class="nv">allDistances: </span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+    <span class="nv">articles: </span><span class="p">[</span><span class="s2">&quot;a1&quot;</span><span class="p">,</span> <span class="s2">&quot;a2&quot;</span><span class="p">,</span> <span class="s2">&quot;a3&quot;</span><span class="p">,</span> <span class="s2">&quot;a4&quot;</span><span class="p">,</span> <span class="s2">&quot;a5&quot;</span><span class="p">,</span> <span class="s2">&quot;a6&quot;</span><span class="p">]</span>
+    <span class="nv">quantities: </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nv">prices: </span><span class="p">[</span>
+        <span class="p">[</span><span class="mf">14.95</span><span class="p">,</span> <span class="mf">16.99</span><span class="p">,</span> <span class="mf">11.5</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">4.99</span><span class="p">,</span> <span class="mf">4.59</span><span class="p">,</span> <span class="mf">4.99</span><span class="p">]</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">12.9</span><span class="p">,</span> <span class="mf">11.99</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">5.99</span><span class="p">,</span> <span class="mf">4.55</span><span class="p">,</span> <span class="mf">4.95</span><span class="p">]</span>
+        <span class="p">[</span><span class="mf">19.9</span><span class="p">,</span> <span class="mf">19.95</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">8.19</span><span class="p">,</span> <span class="mf">7.99</span><span class="p">]]</span>
+    <span class="nv">history: </span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;di&quot;</span><span class="o">:</span> <span class="p">[</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="s2">&quot;si&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1989</span><span class="p">,</span><span class="mi">914</span><span class="p">,</span><span class="mi">3148</span><span class="p">]</span> <span class="c1"># Shopkosten</span>
+            <span class="s2">&quot;ei&quot;</span><span class="o">:</span> <span class="p">[[],[],[]]</span> <span class="c1"># early purchase list</span>
+            <span class="s2">&quot;ti&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1689</span><span class="p">,</span><span class="mi">514</span><span class="p">,</span><span class="mi">2548</span><span class="p">]</span>  <span class="c1"># si - ci (ci ist travel cost)</span>
+            <span class="s2">&quot;sri&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">2548</span><span class="p">,</span><span class="mi">1689</span><span class="p">,</span><span class="mi">514</span><span class="p">]</span> <span class="c1"># si sortiert (soRtiert)</span>
+            <span class="s2">&quot;prevLoc&quot;</span><span class="o">:</span> <span class="mi">0</span> <span class="c1"># 0 ist home</span>
+            <span class="s2">&quot;nextLoc&quot;</span><span class="o">:</span> <span class="mi">3</span> <span class="c1"># basierend auf diesen daten gehe zum ersten shop (0-ten shop, whatever)</span>
+        <span class="p">}</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;di&quot;</span><span class="o">:</span> <span class="p">[</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;si&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1989</span><span class="p">,</span><span class="mi">914</span><span class="p">]</span>
+            <span class="s2">&quot;ei&quot;</span><span class="o">:</span> <span class="p">[[],[]]</span>
+            <span class="s2">&quot;ti&quot;</span><span class="o">:</span> <span class="p">[</span><span class="kc">null</span><span class="p">,</span><span class="mi">714</span><span class="p">,</span><span class="mi">2648</span><span class="p">]</span>
+            <span class="s2">&quot;sri&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1689</span><span class="p">,</span><span class="mi">514</span><span class="p">]</span>
+            <span class="s2">&quot;prevLoc&quot;</span><span class="o">:</span> <span class="mi">3</span>
+            <span class="s2">&quot;nextLoc&quot;</span><span class="o">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;di&quot;</span><span class="o">:</span> <span class="p">[</span>
+                <span class="kc">null</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;si&quot;</span><span class="o">:</span> <span class="p">[</span><span class="kc">null</span><span class="p">,</span><span class="mi">914</span><span class="p">]</span>
+            <span class="s2">&quot;ei&quot;</span><span class="o">:</span> <span class="p">[</span><span class="kc">null</span><span class="p">,[]]</span>
+            <span class="s2">&quot;ti&quot;</span><span class="o">:</span> <span class="p">[</span><span class="kc">null</span><span class="p">,</span><span class="mi">614</span><span class="p">]</span>
+            <span class="s2">&quot;sri&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">614</span><span class="p">]</span>
+            <span class="s2">&quot;prevLoc&quot;</span><span class="o">:</span> <span class="mi">1</span>
+            <span class="s2">&quot;nextLoc&quot;</span><span class="o">:</span> <span class="mi">2</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Das sind die Testdaten für die Demobeispiele.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nv">Shoptimize.Testdata =</span>
+
+    <span class="nv">InformatiCup1:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;InformatiCup Testdatensatz 1&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,g0,g1,g2,g3</span>
+<span class="s2">                g0,0,3,4,6</span>
+<span class="s2">                g1,3,0,2,</span>
+<span class="s2">                g2,4,2,0,3</span>
+<span class="s2">                g3,6,,3,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                3,6</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,g1,g2,g3</span>
+<span class="s2">                a1,1,14.95,16.99,11.50</span>
+<span class="s2">                a2,1,4.99,4.59,4.99</span>
+<span class="s2">                a3,1,,12.90,11.99</span>
+<span class="s2">                a4,1,5.99,4.55,4.95</span>
+<span class="s2">                a5,1,19.90,19.95,</span>
+<span class="s2">                a6,1,,8.19,7.99</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+    <span class="nv">InformatiCup2:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;InformatiCup Testdatensatz 2&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,g0,g1,g2,g3</span>
+<span class="s2">                g0,0,3,4,6</span>
+<span class="s2">                g1,3,0,2,</span>
+<span class="s2">                g2,4,2,0,3</span>
+<span class="s2">                g3,6,,3,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                3,7</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,g1,g2,g3</span>
+<span class="s2">                a1,1,14.95,16.99,11.50</span>
+<span class="s2">                a2,1,4.99,4.59,4.99</span>
+<span class="s2">                a3,1,,12.90,11.99</span>
+<span class="s2">                a4,1,5.99,4.55,4.95</span>
+<span class="s2">                a5,1,19.90,19.95,</span>
+<span class="s2">                a6,1,,8.19,7.99</span>
+<span class="s2">                a7,1,5.95,9.90,</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+    <span class="nv">Szenario1:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;Spezialfall 1: Keine Reisekosten&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Startpunkt,Supermarkt,Großhandel,Spätkauf</span>
+<span class="s2">                Startpunkt,0,0,0,0</span>
+<span class="s2">                Supermarkt,0,0,,</span>
+<span class="s2">                Großhandel,0,,0,</span>
+<span class="s2">                Spätkauf,0,,,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                3,4</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,g1,g2,g3</span>
+<span class="s2">                Eisbergsalat,1,14.95,16.99,11.50</span>
+<span class="s2">                Eis,1,4.99,4.59,4.99</span>
+<span class="s2">                Hammer,1,,12.90,11.99</span>
+<span class="s2">                Club Mate,1,5.99,4.55,4.95</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+    <span class="nv">Szenario2:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;Spezialfall 2: Wähle nur ein Geschäft aus&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Zuhause,Supermarkt,Großhandel,Discounter</span>
+<span class="s2">                Zuhause,0,5,2,5</span>
+<span class="s2">                Supermarkt,5,0,1,</span>
+<span class="s2">                Großhandel,2,1,0,3</span>
+<span class="s2">                Discounter,5,,3,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                3,4</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,Supermarkt,Großhandel,Discounter</span>
+<span class="s2">                Äpfel 1kg,1,2.13,1.99,1.89</span>
+<span class="s2">                Zwiebel 1kg,1,1.59,0.79,0.99</span>
+<span class="s2">                Käse 200g,1,2.00,1.20,1.59</span>
+<span class="s2">                Nudeln 500g,1,0.39,0.39,0.39</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+                
+    <span class="nv">Szenario3:</span>
+        <span class="nv">title: </span><span class="s2">&quot;Spezialfall 3: Hohe Reisekosten&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Zuhause,Supermarkt,Großhandel,Discounter</span>
+<span class="s2">                Zuhause,0,30,12,30</span>
+<span class="s2">                Supermarkt,30,0,6,</span>
+<span class="s2">                Großhandel,12,6,0,18</span>
+<span class="s2">                Discounter,30,,18,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                3,4</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,Supermarkt,Großhandel,Discounter</span>
+<span class="s2">                Äpfel 1kg,1,2.13,1.99,1.89</span>
+<span class="s2">                Zwiebel 1kg,1,1.59,0.79,0.99</span>
+<span class="s2">                Käse 200g,1,2.00,1.20,1.59</span>
+<span class="s2">                Nudeln 500g,1,0.39,0.39,0.39</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+                
+    <span class="nv">Szenario4:</span>
+        <span class="nv">title: </span><span class="s2">&quot;Spezialfall 4: Alle Artikel werden überall angeboten&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Zuhause,Supermarkt,Großhandel,Discounter</span>
+<span class="s2">                Zuhause,0,1,7,5</span>
+<span class="s2">                Supermarkt,1,0,1,1</span>
+<span class="s2">                Großhandel,7,1,0,3</span>
+<span class="s2">                Discounter,5,1,3,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                3,4</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,Supermarkt,Großhandel,Discounter</span>
+<span class="s2">                Äpfel 1kg,1,2.13,1.99,1.89</span>
+<span class="s2">                Zwiebel 1kg,1,1.59,0.79,0.99</span>
+<span class="s2">                Käse 200g,1,2.00,1.20,0.59</span>
+<span class="s2">                Nudeln 500g,1,0.39,0.39,0.39</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+    <span class="nv">Szenario5:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;Optimierung durch den Greedy-Algorithmus&quot;</span>
+        <span class="nv">desc: </span>  <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                The purpose of this demo is to illustrate the need for step-4 of the greedy algorithm</span>
+<span class="s2">                due to early-purchase and/or ta+aa sometimes items are bought to not-best conditions</span>
+<span class="s2">                thus it is advised to look for better markets after the route is final</span>
+<span class="s2">                this demo is prepared to have items that are equally expensive to allow for EP to kick in</span>
+<span class="s2">                compare best_route(without #4) and route_two(with #4), see that route_two may be cheaper than the best_route</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Startpunkt,Supermarkt,Großhandel,Spätkauf,Discounter</span>
+<span class="s2">                Startpunkt,0,2,5,7,2</span>
+<span class="s2">                Supermarkt,2,0,,,1</span>
+<span class="s2">                Großhandel,5,,0,,1</span>
+<span class="s2">                Spätkauf,7,,,0,1</span>
+<span class="s2">                Discounter,2,1,1,1,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                4,6</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,Supermarkt,Großhandel,Spätkauf,Discounter</span>
+<span class="s2">                Käse 200g,1,3.95,4.10,3.70,4.00</span>
+<span class="s2">                Kartoffeln 1kg,1,1.99,2.00,7.99,8.40</span>
+<span class="s2">                Kissen,1,10.1,30.2,,18.99</span>
+<span class="s2">                Bleistife,1,,4.55,4.95,1.00</span>
+<span class="s2">                Papier,1,,,,40.00</span>
+<span class="s2">                Erdnüsse,1,15,13,14,11</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+    <span class="nv">Szenario6:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;Ein größeres Beispiel&quot;</span>
+        <span class="nv">desc: </span>  <span class="s2">&quot;Something fancy to illustrate a bigger graph in JIT&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Startpunkt,Discounter,Supermarkt A,Supermarkt B,Großhandel A,Großhandel B,Spätkauf A,Spätkauf B,Spätkauf C,Spätkauf D</span>
+<span class="s2">                Startpunkt,0,1, , , , , ,1, , </span>
+<span class="s2">                Discounter,1,0, ,1, ,1,1, , , </span>
+<span class="s2">                Supermarkt A, , ,0, ,1, , ,1, , </span>
+<span class="s2">                Supermarkt B, ,1, ,0,1, , , , ,1</span>
+<span class="s2">                Großhandel A, , ,1,1,0, , , ,1,1</span>
+<span class="s2">                Großhandel B, ,1, , , ,0,1, , , </span>
+<span class="s2">                Spätkauf A, ,1, , , ,1,0, , , </span>
+<span class="s2">                Spätkauf B,1, ,1, , , , ,0, , </span>
+<span class="s2">                Spätkauf C, , , , ,1, , , ,0,1</span>
+<span class="s2">                Spätkauf D, , , ,1,1, , , ,1,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                9,3</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,Discounter,Supermarkt A,Supermarkt B,Großhandel A,Großhandel B,Spätkauf A,Spätkauf B,Spätkauf C,Spätkauf D</span>
+<span class="s2">                Zement,5,1,5,5,5,5,5,5,5,5</span>
+<span class="s2">                Eis,5,5,5,5,5,5,1,5,5,5</span>
+<span class="s2">                Hammer,5,5,1,5,5,5,5,5,5,5</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+    <span class="nv">Szenario7:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;Verdeutlichung der Parameter&quot;</span>
+        <span class="nv">desc: </span>  <span class="s2">&quot;Illustration for the parameters&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Zuhause,Großhandel A,Großhandel B,Großhandel C</span>
+<span class="s2">                Zuhause,0,1,3,4</span>
+<span class="s2">                Großhandel A,1,0,2,5</span>
+<span class="s2">                Großhandel B,3,2,0,3</span>
+<span class="s2">                Großhandel C,4,5,3,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                3,3</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,Großhandel A,Großhandel B,Großhandel C</span>
+<span class="s2">                Intel Prozessor,1,5,4,3</span>
+<span class="s2">                Desktop PC,1,5,6,7</span>
+<span class="s2">                Notebook,1,5,1,2</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+
+    <span class="nv">Szenario8:</span>
+        <span class="nv">title: </span> <span class="s2">&quot;Verdeutlichung der Parameter&quot;</span>
+        <span class="nv">desc: </span>  <span class="s2">&quot;Illustration for the parameters&quot;</span>
+        <span class="nv">shops: </span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Fahrtkosten,Zuhause,Großhandel A,Großhandel B,Großhandel C,Großhandel D,Großhandel E</span>
+<span class="s2">                Zuhause,0,1,,4,5,</span>
+<span class="s2">                Großhandel A,1,0,2,,5,8</span>
+<span class="s2">                Großhandel B,,2,0,3,,9</span>
+<span class="s2">                Großhandel C,4,,3,0,,</span>
+<span class="s2">                Großhandel D,5,5,,,0,10</span>
+<span class="s2">                Großhandel E,,8,9,,10,0</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+        <span class="nv">prices: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                5,10</span>
+<span class="s2">                Artikel\\Geschaeft,Menge,Großhandel A,Großhandel B,Großhandel C,Großhandel D,Großhandel E</span>
+<span class="s2">                A1,1,5,4,3,6,6</span>
+<span class="s2">                A2,1,5,6,7,8,8</span>
+<span class="s2">                A3,1,5,1,2,5,5</span>
+<span class="s2">                A4,1,5,5,5,5,5</span>
+<span class="s2">                A5,1,11,12,10,13,14</span>
+<span class="s2">                A6,1,27,,20,23,22</span>
+<span class="s2">                A7,1,12,25,5,,</span>
+<span class="s2">                A8,1,,,5,4,3</span>
+<span class="s2">                A9,1,,,,40,</span>
+<span class="s2">                A10,1,15,13,14,11,10</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

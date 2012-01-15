@@ -1,0 +1,353 @@
+<!DOCTYPE html>  <html> <head>   <title>anlegenPanel.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="anlegenPanel.html">                 anlegenPanel.coffee               </a>                                           <a class="source" href="benchmark.html">                 benchmark.coffee               </a>                                           <a class="source" href="benchmark_greedyparameter.html">                 benchmark_greedyparameter.coffee               </a>                                           <a class="source" href="configurationPanel.html">                 configurationPanel.coffee               </a>                                           <a class="source" href="controlPanel.html">                 controlPanel.coffee               </a>                                           <a class="source" href="demo.html">                 demo.coffee               </a>                                           <a class="source" href="demoPanel.html">                 demoPanel.coffee               </a>                                           <a class="source" href="flot.html">                 flot.coffee               </a>                                           <a class="source" href="floyd.html">                 floyd.coffee               </a>                                           <a class="source" href="gmaps.html">                 gmaps.coffee               </a>                                           <a class="source" href="greedyWorker.html">                 greedyWorker.coffee               </a>                                           <a class="source" href="importPanel.html">                 importPanel.coffee               </a>                                           <a class="source" href="init.html">                 init.coffee               </a>                                           <a class="source" href="jit.html">                 jit.coffee               </a>                                           <a class="source" href="parse.html">                 parse.coffee               </a>                                           <a class="source" href="routePanel.html">                 routePanel.coffee               </a>                                           <a class="source" href="startPanel.html">                 startPanel.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="viz.html">                 viz.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               anlegenPanel.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Menüführung um ein eigenes Szenario anzulegen</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize = </span><span class="nb">window</span><span class="p">.</span><span class="nx">Shoptimize</span>
+
+<span class="nv">root = </span><span class="k">this</span>
+
+<span class="nv">cleanUp = </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#mouseOver&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#homeButton&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
+<span class="nv">editData = </span><span class="nf">(data, doneEdit) -&gt;</span>
+
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">data</span><span class="o">?</span> <span class="o">or</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="nv">data =</span>
+            <span class="nv">shops: </span><span class="p">[]</span>	
+            <span class="nv">distances: </span><span class="p">[]</span>
+            <span class="nv">allDistances: </span><span class="p">[]</span>
+            <span class="nv">articles: </span><span class="p">[]</span>
+            <span class="nv">prices: </span><span class="p">[]</span>
+            <span class="nv">history: </span><span class="p">[]</span>
+            <span class="nv">icons: </span><span class="p">[]</span>
+
+    <span class="nx">replaceMessage</span> <span class="s2">&quot;Bitte geben Sie hier die &lt;b&gt;Geschäfte&lt;/b&gt; an und die Preise der verfügbaren &lt;b&gt;Artikel&lt;/b&gt;. (&lt;i&gt;-1 oder Garbage für nicht verfügbar)&lt;/i&gt;)&quot;</span>
+
+    <span class="nv">selectedIcons = </span><span class="p">[]</span>
+    <span class="nv">articlePrices = </span><span class="p">[]</span>
+    <span class="nv">articleNames = </span><span class="p">[]</span>
+    <span class="nv">articles = </span><span class="mi">0</span>
+    <span class="nv">shops = </span><span class="mi">0</span>
+
+    <span class="nv">makePriceTag = </span><span class="nf">(g, a) -&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;input type=&#39;text&#39; class=&#39;editData tile textInput shop#{g} article#{a}&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">articlePrices</span><span class="p">[</span><span class="nx">a</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="nx">articlePrices</span><span class="p">[</span><span class="nx">a</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">())</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">g</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">a</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+            <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+                <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">select</span><span class="p">()</span>
+            <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;blur&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+                <span class="nv">val = </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+                <span class="k">if</span> <span class="nx">val</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+                    <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">val</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+                <span class="k">else</span>
+                    <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s2">&quot;-1&quot;</span><span class="p">)</span>
+
+    <span class="nv">showProgressButton = </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editData weiter iconButton button clickable&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Weiter&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+            <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+                <span class="nv">data =</span>
+                    <span class="nv">articles: </span><span class="p">[]</span>
+                    <span class="nv">prices: </span><span class="p">[]</span>
+                    <span class="nv">shops: </span><span class="p">[]</span>
+                    <span class="nv">icons: </span><span class="p">[]</span>
+
+                <span class="k">for</span> <span class="nx">s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">shops</span><span class="p">]</span>
+                    <span class="nx">data</span><span class="p">.</span><span class="nx">shops</span><span class="p">.</span><span class="nx">push</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.shopName.no#{s}&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+                <span class="k">for</span> <span class="nx">a</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">articleNames</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
+                    <span class="nx">data</span><span class="p">.</span><span class="nx">articles</span><span class="p">.</span><span class="nx">push</span> <span class="nx">articleNames</span><span class="p">[</span><span class="nx">a</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="nx">data</span><span class="p">.</span><span class="nx">prices</span><span class="p">.</span><span class="nx">push</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="nx">s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">shops</span><span class="p">]</span>
+                        <span class="nx">data</span><span class="p">.</span><span class="nx">prices</span><span class="p">[</span><span class="nx">a</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">push</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData.tile.textInput.article#{a}.shop#{s}&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+                <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">selectedIcons</span>
+                    <span class="nx">data</span><span class="p">.</span><span class="nx">icons</span><span class="p">.</span><span class="nx">push</span> <span class="nx">i</span>
+
+                <span class="nx">cleanUp</span><span class="p">()</span>
+                <span class="nx">doneEdit</span> <span class="nx">data</span>
+                
+    <span class="nv">newArticle = </span><span class="o">-&gt;</span>
+        <span class="nx">articles</span><span class="o">++</span>
+        <span class="k">if</span> <span class="nx">articles</span> <span class="o">&gt;=</span> <span class="nx">MAX_ARTICLES</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addArticleButton&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
+    <span class="nv">addArticle = </span><span class="o">-&gt;</span>
+        <span class="nx">newArticle</span><span class="p">()</span>
+        <span class="nx">articlePrices</span><span class="p">.</span><span class="nx">push</span><span class="p">((</span><span class="nx">nextInt</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span> <span class="o">+</span> <span class="mi">300</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nx">shops</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="nx">s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">shops</span><span class="p">]</span>
+                <span class="nx">makePriceTag</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">articles</span>
+        <span class="nx">showProgressButton</span><span class="p">()</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;awfulOverlay&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">position: </span><span class="s1">&#39;fixed&#39;</span>
+                <span class="nv">top: </span><span class="mi">0</span><span class="p">,</span> <span class="nv">left: </span><span class="mi">0</span>
+                <span class="nv">width: </span><span class="s2">&quot;100%&quot;</span>
+                <span class="nv">height: </span><span class="s2">&quot;100%&quot;</span>
+                <span class="nv">background: </span><span class="s1">&#39;rgba(0, 0, 0, 0.1)&#39;</span>
+
+        <span class="nv">ICON_GRID_OFFSET_X = </span><span class="mi">5</span>
+        <span class="nv">ICON_GRID_OFFSET_Y = </span><span class="mi">6</span>
+        <span class="nv">ICON_GRID_COLS = </span><span class="mi">8</span>
+
+        <span class="nv">OFFSET_X = </span><span class="mi">20</span>
+        <span class="nv">OFFSET_Y = </span><span class="mi">20</span>
+        
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;awfulCanvas&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#awfulOverlay&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">position: </span><span class="s1">&#39;absolute&#39;</span>
+                <span class="nv">top: </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">).</span><span class="nx">offset</span><span class="p">().</span><span class="nx">top</span> <span class="o">+</span> <span class="nx">OFFSET_Y</span>
+                <span class="nv">left: </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">).</span><span class="nx">offset</span><span class="p">().</span><span class="nx">left</span> <span class="o">+</span> <span class="nx">OFFSET_X</span>
+                <span class="nv">width: </span><span class="s2">&quot;100%&quot;</span>
+                <span class="nv">height: </span><span class="s2">&quot;100%&quot;</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editData chooseIconPane&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#awfulCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">ICON_GRID_OFFSET_Y</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">+</span> <span class="nx">OFFSET_Y</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">ICON_GRID_OFFSET_X</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">+</span> <span class="nx">OFFSET_X</span>
+                <span class="nv">width: </span><span class="nx">gridSize</span><span class="p">(</span><span class="nx">ICON_GRID_COLS</span><span class="p">)</span> <span class="o">+</span> <span class="mi">20</span>
+                <span class="nv">height: </span><span class="nx">gridSize</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">NUM_ICONS</span> <span class="err">/ ICON_GRID_COLS + 2)) + 20</span>
+            <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Legen Sie einen Namen fest und wählen danach ein Icon aus!&quot;</span><span class="p">)</span>
+
+        <span class="nv">articleIcon = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editData articleIcon tile no#{articles} noPic&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addArticleButton&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+                <span class="nv">left: </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addArticleButton&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+
+        <span class="nv">textInput = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;input type=&#39;text&#39; class=&#39;editData articleName textInput&#39; /&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#awfulCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">ICON_GRID_OFFSET_Y</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">OFFSET_Y</span> <span class="o">+</span> <span class="mi">32</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">ICON_GRID_OFFSET_X</span><span class="p">)</span> <span class="o">+</span> <span class="nx">OFFSET_X</span>
+                <span class="nv">width: </span><span class="nx">gridSize</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="s2">&quot;Artikel #{articles}&quot;</span><span class="p">)</span>
+
+        <span class="nv">makeIcon = </span><span class="nf">(num) -&gt;</span>
+            <span class="nv">icon = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editData pic#{num} tile chooseIcon&#39;&gt;&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#awfulCanvas&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">css</span>
+                    <span class="nv">top: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">ICON_GRID_OFFSET_Y</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">num</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nx">ICON_GRID_COLS</span><span class="p">))</span> <span class="o">+</span> <span class="nx">OFFSET_Y</span>
+                    <span class="nv">left: </span><span class="nx">gridPos</span><span class="p">(</span><span class="nx">ICON_GRID_OFFSET_X</span> <span class="o">+</span> <span class="p">((</span><span class="nx">num</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nx">ICON_GRID_COLS</span><span class="p">))</span> <span class="o">+</span> <span class="nx">OFFSET_X</span>
+
+            <span class="k">if</span> <span class="nx">num</span> <span class="k">in</span> <span class="nx">selectedIcons</span>
+                <span class="nx">icon</span><span class="p">.</span><span class="nx">css</span>
+                    <span class="nv">opacity: </span><span class="mf">0.2</span>
+                    <span class="nv">cursor: </span><span class="s1">&#39;default&#39;</span>
+            <span class="k">else</span>
+                <span class="nx">icon</span><span class="p">.</span><span class="nx">one</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+                        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.chooseIcon&quot;</span><span class="p">).</span><span class="kc">off</span> <span class="s1">&#39;mouseenter&#39;</span>
+                        <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">NUM_ICONS</span><span class="p">]</span>
+                            <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData.articleIcon.no#{articles}&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s2">&quot;pic#{i}&quot;</span><span class="p">)</span>
+                        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData.articleIcon.no#{articles}&quot;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s2">&quot;pic#{num}&quot;</span><span class="p">)</span>
+                        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#awfulOverlay&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+                        <span class="nx">selectedIcons</span><span class="p">.</span><span class="nx">push</span> <span class="nx">num</span>
+                        <span class="nx">articleNames</span><span class="p">.</span><span class="nx">push</span> <span class="nx">textInput</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>
+                        <span class="nx">attachLabel</span><span class="p">(</span><span class="nx">articleIcon</span><span class="p">,</span> <span class="nx">textInput</span><span class="p">.</span><span class="nx">val</span><span class="p">())</span>
+                    <span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;mouseenter&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+                        <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">NUM_ICONS</span><span class="p">]</span>
+                            <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData.articleIcon.no#{articles}&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s2">&quot;pic#{i}&quot;</span><span class="p">)</span>
+                        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData.articleIcon.no#{articles}&quot;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s2">&quot;pic#{num}&quot;</span><span class="p">)</span>
+                        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData.articleIcon.no#{articles}&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s2">&quot;noPic&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">NUM_ICONS</span><span class="p">]</span>
+            <span class="nx">makeIcon</span> <span class="nx">i</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#awfulOverlay&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+        <span class="nx">textInput</span><span class="p">.</span><span class="nx">focus</span><span class="p">().</span><span class="nx">select</span><span class="p">()</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addArticleButton&quot;</span><span class="p">).</span><span class="nx">animate</span><span class="p">({</span><span class="nv">left: </span><span class="s2">&quot;+=#{gridPos 1}&quot;</span><span class="p">})</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;addArticleButton&#39; class=&#39;editData addButton tile clickable&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">css</span>
+            <span class="nv">top: </span><span class="nx">gridPos</span> <span class="mi">3</span>
+            <span class="nv">left: </span><span class="nx">gridPos</span> <span class="mi">5</span>
+        <span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addArticleHint&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">())</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">addArticle</span><span class="p">()</span>
+
+    <span class="nv">makeShop = </span><span class="nf">(num) -&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editData tile shopIcon no#{num}&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">gridPos</span><span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="nx">num</span><span class="p">)</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span> <span class="mi">0</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;input type=&#39;text&#39; class=&#39;textInput editData shopName no#{num}&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="s2">&quot;Geschäft #{num}&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">gridPos</span><span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="nx">num</span><span class="p">)</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span> <span class="mi">1</span>
+                <span class="nv">width: </span><span class="nx">gridSize</span> <span class="mi">4</span>
+            <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;keyup&quot;</span><span class="p">,</span> <span class="nf">(ev) -&gt;</span>
+                <span class="k">if</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">which</span> <span class="o">==</span> <span class="mi">13</span> <span class="o">&amp;&amp;</span> <span class="nx">shops</span> <span class="o">&lt;</span> <span class="nx">MAX_SHOPS</span>
+                    <span class="nx">addShop</span><span class="p">()</span>
+
+    <span class="nv">newShop = </span><span class="o">-&gt;</span>
+        <span class="nx">shops</span><span class="o">++</span>
+        <span class="k">if</span> <span class="nx">shops</span> <span class="o">&gt;=</span> <span class="nx">MAX_SHOPS</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addShopButton&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nx">makeShop</span> <span class="nx">shops</span>
+
+    <span class="nv">shopName1 = </span><span class="nx">newShop</span><span class="p">()</span>
+
+    <span class="nv">addShop = </span><span class="o">-&gt;</span>
+        <span class="nx">newShop</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="nx">fadeIn</span><span class="p">().</span><span class="nx">focus</span><span class="p">().</span><span class="nx">select</span><span class="p">()</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addShopButton&quot;</span><span class="p">).</span><span class="nx">animate</span><span class="p">({</span><span class="nv">top: </span><span class="s2">&quot;+=#{gridPos 1}&quot;</span><span class="p">})</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#addShopHint&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nx">articles</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="nx">a</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">articles</span><span class="p">]</span>
+                <span class="nx">makePriceTag</span> <span class="nx">shops</span><span class="p">,</span> <span class="nx">a</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;addShopButton&#39; class=&#39;editData addButton tile clickable&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">css</span>
+            <span class="nv">top: </span><span class="nx">gridPos</span> <span class="mi">5</span>
+            <span class="nv">left: </span><span class="nx">gridPos</span> <span class="mi">4</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">addShop</span><span class="p">()</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editData&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+
+    <span class="nx">shopName1</span><span class="p">.</span><span class="nx">focus</span><span class="p">().</span><span class="nx">select</span><span class="p">()</span>
+
+    <span class="nx">after</span> <span class="mi">500</span><span class="p">,</span> <span class="o">-&gt;</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;addArticleHint&#39; class=&#39;editData hint toTheLeft&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Hier Artikel hinzufügen&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">gridPos</span> <span class="mi">3</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span> <span class="mi">6</span>
+            <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;addShopHint&#39; class=&#39;editData hint toTheLeft&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Hier Geschäfte hinzufügen&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">top: </span><span class="nx">gridPos</span> <span class="mi">5</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span> <span class="mi">5</span>
+            <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+
+
+<span class="nv">cleanUpDistances = </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.editDistances&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+
+<span class="nv">editDistances = </span><span class="nf">(data, done) -&gt;</span>
+    
+    <span class="nx">replaceMessage</span> <span class="s2">&quot;Geben Sie hier an, &lt;b&gt;wie viel es kostet&lt;/b&gt; um von einem Geschäft zu einem anderen zu kommen!&quot;</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;&lt;div class=&#39;editDistances helpText&#39;&gt;</span>
+<span class="s2">         &lt;span&gt;Wegkosten bearbeiten&lt;/span&gt;</span>
+<span class="s2">         &lt;p&gt;Hier können Sie die Wegkosten zwischen den Geschäften bearbeiten.</span>
+<span class="s2">         Es ist durchaus erlaubt, dass nicht von jedem Punkt zu jedem anderen Punkt</span>
+<span class="s2">         eine Verbindung existiert; das heißt einige Textfelder dürfen auch leer bleiben.</span>
+<span class="s2">         Die tatsächlichen Kosten um von einem Punkt zu einem anderen zu kommen</span>
+<span class="s2">         werden dann von &lt;i&gt;shoptimize&lt;/i&gt; berechnet werden.</span>
+<span class="s2">         &lt;/div&gt;&quot;&quot;&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+
+    <span class="nv">showProgressDistancesButton = </span><span class="o">-&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editDistances weiter iconButton button clickable&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Weiter&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+            <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+                <span class="nv">data.distances = </span><span class="p">[]</span>
+
+                <span class="k">for</span> <span class="nx">s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">data</span><span class="p">.</span><span class="nx">shops</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
+                    <span class="nx">data</span><span class="p">.</span><span class="nx">distances</span><span class="p">.</span><span class="nx">push</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="nx">s2s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="nx">s2s</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">s2s</span> <span class="o">==</span> <span class="nx">s</span>
+                            <span class="k">continue</span>
+                        <span class="nv">v = </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;input.editDistances.from#{s2s}.to#{s}&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+                        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s2">&quot;#{s} #{s2s} #{v}&quot;</span>
+                        <span class="nx">data</span><span class="p">.</span><span class="nx">distances</span><span class="p">[</span><span class="nx">s</span><span class="p">][</span><span class="nx">s2s</span><span class="p">]</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">v</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nx">v</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">for</span> <span class="nx">s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">data</span><span class="p">.</span><span class="nx">shops</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="nx">s2s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">s</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="nx">s2s</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">s2s</span> <span class="o">==</span> <span class="nx">s</span>
+                            <span class="k">continue</span>
+                        <span class="nx">data</span><span class="p">.</span><span class="nx">distances</span><span class="p">[</span><span class="nx">s2s</span><span class="p">][</span><span class="nx">s</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">distances</span><span class="p">[</span><span class="nx">s</span><span class="p">][</span><span class="nx">s2s</span><span class="p">]</span>
+                <span class="k">for</span> <span class="nx">s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">data</span><span class="p">.</span><span class="nx">shops</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
+                    <span class="nx">data</span><span class="p">.</span><span class="nx">distances</span><span class="p">[</span><span class="nx">s</span><span class="p">][</span><span class="nx">s</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="nx">cleanUpDistances</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nx">done</span><span class="o">?</span>
+                    <span class="nx">done</span> <span class="nx">data</span>
+
+      
+    <span class="k">for</span> <span class="nx">s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">data</span><span class="p">.</span><span class="nx">shops</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span>
+        <span class="nv">makeDistanceTag = </span><span class="nf">(from, to) -&gt;</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editDistances tile textInput pendant from#{from} to#{to}&#39;&gt;&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">css</span>
+                    <span class="nv">left: </span> <span class="nx">gridPos</span><span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="nx">from</span><span class="p">)</span>
+                    <span class="nv">top: </span><span class="nx">gridPos</span><span class="p">(</span><span class="mi">4</span> <span class="o">+</span> <span class="nx">to</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">show</span><span class="p">()</span>
+            <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;input type=&#39;text&#39; class=&#39;textInput editDistances tile from#{to} to#{from}&#39;&gt;&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+                <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">css</span>
+                    <span class="nv">top: </span> <span class="nx">gridPos</span><span class="p">(</span><span class="mi">4</span> <span class="o">+</span> <span class="nx">from</span><span class="p">)</span>
+                    <span class="nv">left: </span><span class="nx">gridPos</span><span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="nx">to</span><span class="p">)</span>
+                <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+                <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;keyup&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+                    <span class="nv">v = </span><span class="nb">parseFloat</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">())</span>
+                    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.pendant.from#{from}.to#{to}&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="k">if</span> <span class="nx">v</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nx">v</span> <span class="k">else</span> <span class="s2">&quot;?&quot;</span><span class="p">)</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editDistances icon shop no#{s}&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span><span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="nx">s</span><span class="p">)</span>
+                <span class="nv">top: </span> <span class="nx">gridPos</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;editDistances icon shop no#{s}&#39;&gt;&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+            <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">css</span>
+                <span class="nv">left: </span><span class="nx">gridPos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                <span class="nv">top: </span> <span class="nx">gridPos</span><span class="p">(</span><span class="mi">4</span> <span class="o">+</span> <span class="nx">s</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">fadeIn</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="nx">s2s</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">s</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nx">s</span> <span class="o">==</span> <span class="nx">s2s</span>
+                <span class="k">continue</span>
+            <span class="nx">makeDistanceTag</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">s2s</span>
+    
+    <span class="nx">showProgressDistancesButton</span><span class="p">()</span>
+         
+<span class="nv">doneEditDistances = </span><span class="nf">(data) -&gt;</span>
+    <span class="nv">data.quantities = </span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="nx">a</span> <span class="k">in</span> <span class="nx">data</span><span class="p">.</span><span class="nx">articles</span><span class="p">)</span>
+    <span class="nx">data</span><span class="p">.</span><span class="nx">shops</span><span class="p">.</span><span class="nx">unshift</span> <span class="s2">&quot;Start&quot;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">data</span>
+    <span class="nx">Shoptimize</span><span class="p">.</span><span class="nx">ControlPanel</span> <span class="nx">data</span>
+
+<span class="nv">doneEditData = </span><span class="nf">(data) -&gt;</span>
+    <span class="nx">editDistances</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">doneEditDistances</span>
+
+<span class="nv">Shoptimize.AnlegenPanel = </span><span class="o">-&gt;</span>
+    <span class="nx">install</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">Shoptimize</span>
+
+    <span class="nx">editData</span> <span class="p">{},</span> <span class="nx">doneEditData</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;button iconButton&#39; id=&#39;homeButton&#39;&gt;Zurück&lt;/div&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">().</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">cleanUp</span><span class="p">()</span>
+            <span class="nx">StartPanel</span><span class="p">()</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

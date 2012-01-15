@@ -1,0 +1,1023 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\usepackage[left=2.5cm, right=3cm]{geometry}              % flexible and complete interface to document dimensions
+\usepackage[latin1]{inputenc}                             % font encoding for umlauts
+\usepackage[ngerman]{babel}                               % language settings
+\usepackage[T1]{fontenc}                                  % T1 font encoding
+\usepackage{amsmath}                                      % AMS mathematical facilities
+%\usepackage{amssymb}                                     % defines symbol names for math symbols in the fonts MSAM and MSBM
+\usepackage[bitstream-charter]{mathdesign}                % mathematical fonts to fit with Bitstream Charter
+\usepackage{courier}                                      % replaces the current typewriter font for Adobe Courier
+\usepackage{listings}                                     % source code printer
+\usepackage{color}                                        % adding colors
+\usepackage{fancyhdr}                                     % extensive control of page headers and footers
+\usepackage{booktabs}                                     % publication quality tables
+\usepackage{xcolor}                                       % driver-independent color extensions   
+\usepackage{tikz}                                         % creating graphics programmatically
+\usepackage{float}                                        % improved interface for floating objects
+\usepackage{subfig}                                       % figures broken into subfigures
+\usepackage{multirow}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}      % floating algorithm environment with algorithmic keywords
+
+\definecolor{lightgray}{rgb}{.95,.95,.95}
+
+\lstset{backgroundcolor=\color{lightgray},
+        basicstyle=\ttfamily\fontsize{9pt}{9pt}\selectfont\upshape,
+				commentstyle=\rmfamily\slshape,
+				keywordstyle=\rmfamily\bfseries\color{black},
+				captionpos=b,
+				showstringspaces=false,
+				breaklines=true,
+				frame=lines,
+				tabsize=2,
+				aboveskip={\baselineskip}
+}
+
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\renewcommand{\labelenumii}{(\alph{enumii})}
+\renewcommand{\algorithmcfname}{Algorithmus}
+
+\subject{Entwurfsdokument}
+\title{shoptimize}
+\author{Julian Fleischer $\cdot$ Konrad Reiche $\cdot$ Sören Titze $\cdot$ André Zoufahl}
+\date{\today}
+\publishers{\vskip 2ex InformatiCup 2012}
+
+\begin{document}
+
+\pagestyle{fancy}
+\maketitle
+
+\section{Einleitung}
+
+Wir sind ein Team aus vier Bachelor- bzw. Masterstudenten, die am InformatiCup 2012 teilnehmen. Der InformatiCup\footnotemark{} ist ein Wettbewerb für Studenten, der von der Gesellschaft für Informatik e.V. (GI)\footnotemark{} veranstaltet wird. Der Wettbewerb konzentriert sich auf Probleme der Informatik, die über die Entwicklung eines Algorithmus hinausgehen. So reicht es nicht aus einfach nur Implementierung durchzuführen, die das Problem löst, sondern die Lösung sollte auch mit einem theoretischen Konzept untermauert werden, das mit wissenschaftlichen Methoden entwickelt wurde.
+
+\footnotetext[1]{InformatiCup -- http://www.informaticup.de/}
+\footnotetext{Gesellschaft für Informatik e.V. (GI) -- http://www.gi.de/}
+
+Eine der Problemstellungen des InformatiCup 2012 beschäftigt sich mit der Optimierung einer Einkaufsroute bei der Weg- und Artikelkosten minimiert werden sollen. Wir haben uns für dieses Problem entschieden und eine Software mit den Namen \emph{shoptimize} entwickelt, welche das Problem mit einem Greedy Algorithmus löst. Dieses Dokument beschreibt den Entwurf, sowie die Entwicklung und die dahinter stehenden Entscheidungen der Lösung.
+
+\subsection{Problemstellung}
+
+Beim wöchentlichen Großeinkauf einer Familie kann viel Geld gespart werden, wenn zuvor die Artikelpreise verglichen und die Einkaufsroute zu den Geschäften optimiert werden. Diese Aufgabe soll durch ein Programm unterstützt werden, in das die Preise der gewünschten Artikel für die einzelnen Geschäfte eingegeben werden.
+
+Gegeben sei eine Menge von $n$ Artikeln $A := \{ a_1,\dots,a_n \}$, $k$ die in $k$ Geschäften angeboten werden $G := \{ g_1,\dots,g_k \}$, einen Ausgangspunkt $g_0$ und eine Matrix $\emph{articlePrice}(i,j)$, die den Preis $a_i$ in Geschäft $g_j$ definiert. Jeder Artikel $g_j$ kann in einer Teilmenge der Geschäfte $G_l \subseteq G$ mit $|G_l| \geq 1$ erworben werden. Wird ein Artikel in einem Geschäft angeboten, so ist die Menge der dort vorhandenen Artikel stets ausreichend. Jedes Geschäft kann vom Startpunkt aus erreicht werden. Dies kann direkt oder auch indirekt über andere Geschäfte geschehen. Die Reisekosten von Punkt $g_j$ zu Punkt $g_k$ sind in einer weiteren Matrix definiert.
+
+Das Ziel besteht darin einen Algorithmus zu entwickeln, der die oben beschriebenen Werte als Eingabe nimmt und eine optimale Route erstellt. Die Lösung ist gültig, wenn alle Artikel erworben werden können. Die Lösung ist optimal, wenn sie gültig ist und die Gesamtkosten (Summe aller Artikel- und Reisekosten) minimiert. Desweiteren soll eine Visualisierung des Algorithmuses und der berechneten Route durchgeführt werden.
+
+\subsection{Szenarien}
+
+Bevor das allgemeine Problem untersucht wird, werden folgende Vereinfachungen in Form von Szenarien untersucht, Wenn keines dieser Szenarien zutrifft, ist die globale Optimierung für das Problem vorzunehmen.
+\begin{itemize}
+
+\item \textbf{Keine Fahrtkosten:} Es existieren keine Fahrtkosten, d.h. Kantengewichte $w(e) = 0$
+
+\item \textbf{Wähle nur einen Shop:} Jeder Artikel $a_i$ wird in jedem Geschäft $g_j$ angeboten, es soll aber nur eine Geschäft ausgewählt werden, in dem alle Artikel eingekauft werden.
+
+\item \textbf{Hohe Reisekosten:} Nicht jedes Geschäft führt alle Artikel. Die Reisekosten sind so hoch, dass es sich meist nicht lohnt für günstigere Einkaufspreise weit entferne Geschäfte zu besuchen.
+
+\item \textbf{Alle Artikel werden überall angeboten:} Jeder Artikel $a_i$ wird in jedem Geschäft $g_j$ angeboten.
+\end{itemize}
+
+\section{Entwurf}
+
+
+Das Problem wird als ein ungerichteter Graph $H = (V,E)$ modelliert, in dem jedes Geschäft $g_j \in G\backslash\{ g_0 \}$ und die Startposition $g_0$ als Knoten $v \in V$ repräsentiert werden. Es existieren gewichtete Kanten $e \in E$, die die Knoten untereinander verbinden. Das Gewicht repräsentiert die Kosten, die aufgewendet werden müssen, um von Ort $g_j$ zu einem anderen Ort $g_k$ zu gelangen, d.h. $w(e) = \emph{travelCost}(j,k)$. Die allgemeine Struktur für das Finden einer Lösung sieht folgendermaßen aus:
+
+\begin{enumerate}
+\item Überprüfe die Eingabe auf Korrektheit
+
+\begin{itemize}
+\item Kann jedes Geschäft erreicht werden?
+
+\item Kann jeder Artikel in mindestens einem Geschäft erworben werden?
+\end{itemize}
+
+\item Erstelle einen kompletten Graph, indem die kürzesten Wege mit dem Floyd-Warshall Algorithmus berechnet werden
+
+\item Finde eine Route, die Reise- und Artikelkosten minimiert
+
+\item Visualisiere die Ergebnisse und den Algorithmus
+\end{enumerate}
+
+\subsection{Datenstrukturen}
+
+Durch den dynamischen Charakter von JavaScript und die Tatsache, dass keine Schnittstellen programmatisch vorgegeben werden können, haben wir uns dazu entschiedene formal Schnittstellen zu definieren an denen sich jeder orientiert.
+
+\begin{itemize}
+\item \textbf{distances} ist ein zwei-dimensionales Array bzw. Matrix in dem die Wegkosten abgelegt sind. Anfangs ist der Wert in \emph{distances} von Knoten $i$ und $j$ zwischen denen keine direkte Verbindung steht $-1$. Durch Anwendung des Floyd-Warshall Algorithmus werde diese Einträge ersetzt. Zusätzlich gilt $\emph{distances.length} = |G|$.
+
+\begin{lstlisting}
+distances[i][j] = -1 <= n <= MAX_INT
+\end{lstlisting}
+
+\item \textbf{prices} ist ein zwei-dimensionales Array bzw. Matrix in dem die Preise pro Artikel/Geschäft gespeichert sind. Die Matrix besteht aus $n$ Zeilen und $m$ Spalten, wobei $n$ die Anzahl der Artikel ist und $m$ die Anzahl der Geschäfte. Der Wert in der Matrix ist $-1$, wenn der Artikel nicht verfügbar ist.
+
+\begin{lstlisting}
+prices[i][j] = -1 <= n <= MAX_INT
+\end{lstlisting}
+
+\item \textbf{shops} ist ein Array bestehen aus Strings. Dabei bezeichnet \emph{shops[i]} den Namen von Geschäft $g_{i+1}$.
+
+\begin{lstlisting}
+shops[i] = "name"
+\end{lstlisting}
+
+\item \textbf{quantities} ist ein Array das die Anzahl der zu kaufenden Artikel speichert, d.h. $\emph{quantities}[i]$ ist die Anzahl für Artikel $a_{i+1}$.
+
+\begin{lstlisting}
+quantities[i] = 1 <= n <= MAX_INT
+\end{lstlisting}
+
+\item \textbf{articles} ist ein Array bestehen aus Strings. Dabei bezeichnet \emph{articles[i]} den Namen von Geschäft $a_{i+1}$.
+
+\begin{lstlisting}
+articles[i] = "name"
+\end{lstlisting}
+
+\item \textbf{greedySettings} ist ein JavaScript Objekt über das die Konfiguration des Algorithms durchgeführt wird. Die einzelnen Parameter werden im Detail im Abschnitt \ref{subsec:greedy-algorithm} besprochen.
+
+\begin{lstlisting}
+greedySettings =
+        configTA      : 0 <= TA <= 100
+        configAA      : 0 <= AA <= 100
+        configTS      : 0 <= TS <= 100
+        configEP      : 0 <= EP <= 100
+        maxIterations : 1 <= m <= MAX_INT
+\end{lstlisting}
+
+\item \textbf{result} ist der Rückgabewert vom Algorithmus in Form von einem JavaScript Objekt, das alle nötigen Daten für die Ausgabe liefert. Dabei ist \emph{minCost} der Wert für die gesamten Ausgaben in der berechneten Einkaufsroute ($\emph{articleCost} + \emph{travelCost}$). 
+
+\begin{lstlisting}
+result =
+        minCost         : 1 <= cost <= MAX_INT
+        articleCost     : 1 <= articleCost <= MAX_INT
+        travelCost      : 0 <= travelCost <= MAXINT
+        bestRoute       : finalRoute
+        seed            : number
+        routeReplayData : data
+\end{lstlisting}
+
+Die eigentliche Route und die zu kaufenden Artikel sind in \emph{bestRoute} definiert. Um die Entscheidungen des Algorithmus besser evaluieren oder wiederholen zu können wird auch der verwendete \emph{random seed} zurückgegeben. Das Array \emph{routeReplayData} liefert alle nötigen Informationen um den Algorithmus zu visualisieren.
+
+\item \textbf{route} beinhaltet die zu besuchenden Geschäfte und welcher Artikel in welchem Geschäft gekauft werden soll.
+
+\begin{lstlisting}
+route[i] = [shopId, articleId, articleId, ...]
+\end{lstlisting}
+
+In $\emph{route}[0]$ ist das Geschäft das zuerst, ausgehend von der Startposition, besucht werden soll und alle Artikel die dort gekauft werden sollen. In $\emph{route}[1]$ ist dann das nächste Geschäft definiert, usw. Sind alle Elemente in \emph{route} abgearbeitet wird der kürzeste Weg zur Startposition genommen.
+
+\end{itemize}
+
+
+\subsection{Greedy Algorithmus}
+\label{subsec:greedy-algorithm}
+
+Der von uns verwendete Greedy Algorithmus wurde zunächst aus dem Artikel \emph{Exploring greedy criteria for the dynamic traveling purchaser problem} \cite{AMV09} adaptiert. Obwohl sich der Artikel mit dem dynamischen Traveling Purchaser Problem (TPP) beschäftigt, können wir den Algorithmus auch für dieses Problem verwenden. Der Greedy Algorithmus kann grob in drei Schritte unterteit werden. Die drei Schritte lauten wie folgt:
+\begin{enumerate}
+\item \textbf{Auswahl eines Geschäfts} Wähle aus den vorhandenen Geschäften eines aus
+\item \textbf{Gehe zum Geschäft} Bewegung vom aktuellen Standort zum neuen Standort
+\item \textbf{Entscheide was gekauft wird} Auswahl der Artikel die im neuen Geschäft gekauft werden sollen
+\end{enumerate}
+
+Der von uns übernommene Algorithmus wird im weiteren als Basisheuristik beschrieben. Auf diese aufbauend haben wir eigene Ideen eingebracht und den Algorithmus durch eine Zufallsheuristik erweitert. Jeder der drei beschriebenen Schritte wird durch Zufallszahlen beeinflusst. Diese Heuristik wird nach der Basisheuristik als erweiterte Heuristik vorgestellt.
+
+\subsubsection{Basisheuristik}
+
+Bevor nach einer optimalen Route gesucht wird, müssen zwei Datenstrukturen initialisiert werden.
+\[ \emph{cheapestShops} : a_i \rightarrow G_i \subseteq G \]
+
+Die Funktion \emph{cheapestShops} ordnet jeden Artikel zu dem Geschäft zu, von dem es angeboten wird. Die Menge der Geschäfte wird dabei aufsteigend nach dem Preis des jeweiligen Artikels sortiert.
+\[ \emph{travelCost} : g_j, g_k \rightarrow \mathbb{N} \]
+
+Die Funktion \emph{travelCosts} verwendet den Floyd-Warshall Algorithmus um alle kürzesten Wege zu ermitteln. Danach werden die folgenden drei Schritte durchgeführt:
+
+\begin{enumerate}
+\item Deklariere $\emph{LeftArticles} := A$ als Menge der Artikel, die noch nicht gekauft wurden.
+
+\item Deklarieren $\emph{UnvisitedShops} := G$ als Menge der Geschäfte, die noch nicht besucht wurden
+
+\item Berechne für jedes Geschäft $g_j \in \emph{UnvisitedShops}$:
+
+\begin{enumerate}
+
+\item $\emph{shoppingList}$ enthält für jedes Geschäft $g_j$ alle Artikel, die dort am günstigsten angeboten werden:
+\[ \emph{shoppingList}(g_j) = \Bigr[ a_i\ \big|\ a_i \leftarrow \emph{leftArticles} \wedge g_j = \emph{first(chepeastShops}(a_i)) \Bigl]  \]
+
+\item $\emph{purchaseCost}$ bildet für alle $\emph{shoppingList}(g_j)$ die Summe aller Artikelpreise:
+\begin{center}
+$\emph{purchaseCost}(g_j) = \sum_{a_i \in\ \emph{shoppingList}(g_j)} \emph{articlePrice}(i,j)$
+\end{center}
+\end{enumerate}
+
+\item Wähle das Geschäft $g_{\emph{next}}$ mit dem größten Wert 
+\[ \emph{purchaseCost}(g_j) - \emph{travelCosts}(\emph{currentLocation},j) \]
+für alle Geschäfte $g_j \in \emph{UnvisitedShops}$.
+
+\item Gehe zu Geschäft $g_{\emph{next}}$ und setze $\emph{currentLocation} := g_{next}$ und entferne $g_{\emph{next}}$ aus der Liste von $\emph{UnivsitedShops}$.
+
+\item Kaufe alle in der Liste $\emph{shoppingList}(g_{\emph{next}})$ enthaltenen Artikel und entferne sie aus der Liste $\emph{leftArticles}$.
+
+\item Wiederhole (3) bis (6) bis die Liste $\emph{leftArticles}$ leer ist.
+\end{enumerate}
+
+Schritt (4) ist der Kern des Greedy Algorithmus: Es sollen möglichst viele Artikel zu günstigen Preisen in einem Geschäft gekauft werden. In diesem Fall ist es also in unserem Interesse viel Geld auszugeben. Es wird jedoch die Differenz zu den Wegkosten berechnet, um die Reisekosten möglichst gering zu halten. Der berechne Wert ist die Güte des Geschäfts. Im Sinne des Greedy Algorithmus hängt die Güte von der aktuellen Position im Graphen ab und wird nach jedem Schritt neuberechnet. In Pseudocode ausgedrückt funktioniert unser Algorithmus folgendermaßen:
+
+\begin{algorithm}
+$\emph{LeftArticles} \gets A$\;
+$\emph{UnvisitedShops} \gets G$\;
+$\emph{Route} \gets \varnothing$\;
+\While{$\emph{LeftArticles} \not= \varnothing$}
+{
+	\ForEach{$g_j$ \bf{in} $\emph{UnvisitedShops}$}
+	{
+	  $\emph{shoppingList}(g_j) = [ a_i\ |\ a_i \leftarrow \emph{leftArticles} \wedge g_j = \emph{first(cheapestShops}(a_i)) ]$\;
+	  $\emph{purchaseCost}(g_j) = \sum_{a_i \in\ \emph{shoppingList}(g_j)} \emph{prices}(i,j)$\;
+	  $\emph{shopCandidates}[j] = \emph{purchaseCost}(g_j) - \emph{travelCost}(\emph{currentLocation},j)$\;
+	}
+	$g_{\emph{next}} \gets max(\emph{shopCandidates})$\;
+	\emph{Move to shop $g_{\emph{next}}$}\;
+        \emph{UnvisitedShops.delete}$(g_{next})$\;
+        \emph{articles} $\gets \varnothing$\;
+	\ForEach{$a_i$ \bf{in} $shoppingList(g_{\emph{next}})$}
+	{
+	  $\emph{articles} \gets \emph{articles} \cup \{ a_i \}$
+	}
+        $\emph{Route.put}(g_{\emph{next}},articles)$\;
+}
+\Return $Route$
+\caption{{\sc GreedyBasic} Greedy Algorithmus mit Basisheuristik}
+\label{alg:greedy_basic}
+\end{algorithm}
+
+\paragraph{Komplexitätsanalyse}
+
+Zunächst betrachten wir die Zeitkomplexität. Der schlechteste Fall tritt ein, wenn jeder Artikel in einem anderen Geschäft gekauft werden muss, da die Berechnung von \emph{shoppingList}, \emph{purchaseCost} und \emph{shopCandidate} (Zeile 5-8) länger dauert als das Kaufen der Artikel beim Durchlaufen der \emph{shoppingList} (Zeile 13-14).
+
+\begin{itemize}
+\item Zeile 1-3 Zuweisungen $3\cdot O(1)$
+
+\item Zeile 4-15 Schleife $|A|$ mal
+\begin{itemize}
+
+\item Zeile 5-8 Schleife $O(|G|)$ mal
+
+\begin{itemize}
+\item Zeile 5 Schleifentermination $O(1)$
+\item Zeile 6 Zuweisung $O(|A|)$
+\item Zeile 7-8 Zuweisung $2 \cdot O(1)$
+\end{itemize}
+
+\item Zeile 9-10 Zuweisungen $2 \cdot O(1)$
+\item Zeile 11 Löschen eines Elements aus der Liste: $O(1)$ (armotisiert)
+\item Zeile 12 Zuweisung $O(1)$
+\item Zeile 13-14 Schleife $O(1)$ mal
+\begin{itemize}
+\item Zeile 13 Schleifentermination $O(1)$
+\item Zeile 14 Zuweisung $O(1)$
+\end{itemize}
+\item Zeilen 15 Erstellen der Einkaufsliste $O(1)$
+\end{itemize}
+
+\end{itemize}
+
+Da im schlechtesten Fall jeder Artikel in einem anderem Geschäft gekauft werden muss, wird die äußerste Schleife (Zeile 4) auch $|A|$ mal ausgeführt, zusammen mit der inneren Schleife $|G|$ mal. Insgesamt kommen wir also auf eine Laufzeit von:
+
+\begin{align*}
+& = 3 + |A| \cdot (O(|G|) \cdot (O(1) + O(|A|) + 2 \cdot O(1)) + 2 \cdot O(1) + O(1) + O(1) + O(1) + O(1))\\
+& = 3 + |A| \cdot (O(|G|) \cdot (O(|A| + 3) + 6))\\
+& = 3 + |A| \cdot (O(|G|) \cdot O(|A|) + 3 \cdot O(|G|) + 6)\\
+& = 3 + O(|A|^2) \cdot O(|G|) + O(|A|) \cdot 3 \cdot O(|G|) + 6\\
+& \in  O(|A|^2 \cdot |G| + |A| \cdot |G|)
+\end{align*}
+
+
+\subsubsection{Erweiterte Heuristik}
+\label{sec:advanced_heuristics}
+
+In einigen Fällen erweist sich die Basisheuristik als zu schwach. Hinzu kommt, dass der Greedy Algorithmus immer dasselbe Ergebnis zurückliefert. Während unser Evaluierung der Basisheuristik hat sich gezeigt, dass die Berechnung einer Lösung ausreichend schnell ist und Platz zur Optimierung bietet, siehe dazu die Benchmarkergebnisse im Dokument zur Qualitätssicherung.
+
+Aus diesem Grund sind wir auf die Idee gekommen, die Ergebnisse des  Algorithmus durch Verwendung von Zufallsvariablen varrieren zu lassen. Durch mehrere Berechnungen (Iterationen) entstehen so verschiedene Ergebnisse von denen das beste Ergebnis als Lösung zurückgegeben wird. Die erweiterte Heuristik verwendet folgende Parameter:
+
+\begin{itemize}
+\item \textbf{Tendency Articles ($TA$):} Ist die Wahrscheinlichkeit, ob die erweiterte Heuristik bei der Berechnung der \emph{shoppingList} verwendet werden soll. Hier bedeutet $0.0$, dass immer die grundlegene Heuristik verwendet wird und $1.0$, dass immer die erweiterte Heuristik verwendet wird. Wie diese Heuristik konkret aussieht, wird beim nächsten Parameter \emph{Additional Articles} beschrieben.
+
+\item \textbf{Additional Articles ($AA$):} Gibt an, wie viele Geschäfte beim Berechnen der \emph{shoppingList} berücksichtigt werden sollen. Es wird demnach nicht nur das Geschäft gewählt in der Artikel $a_i$ am günstigsten Angeboten wird, sondern auch die $\lfloor AA \cdot k\rfloor$ günstigsten Geschäfte, wobei $k = |G|$. Dieser Parameter wird nur dann verwendet, wenn die erweiterte Heuristik genutzt wird.
+
+\item \textbf{Tendency Shop ($TS$):} Gibt die Wahrscheinlichkeit an mit der die erweiterte Heuristik bei der Auswahl der Geschäfte in Schritt (4) verwendet werden soll. Auch hier bedeutet $0.0$, dass immer die grundlegene Heuristik verwendet wird und $1.0$, dass immer die erweiterte Heuristik verwendet wird. Mit einer Wahrscheinlichkeit von $TS$ wird nicht das Geschäft mit der besten Güte aus \emph{shopCandidates} ausgewählt, sondern das Geschäft mit der $\lfloor X \cdot k\rfloor$-besten Güte, wobei $X$ ist eine gleichverteilte Zufallszahl und $k = |\emph{UnvisitedShops}|$ ist.
+
+\item \textbf{Early Purchase ($EP$):} Definierit einen Faktor, der beeinflusst, ob ein Artikel der normalerweise in Geschäft $g_k$ gekauft werden würden, in einem vorher besuchten Geschäft $g_j$ gekauft werden soll. Hier definiert $\emph{averagePrice}(a_i)$ eine Funktion, die den Durchschnittspreis für einen Artikel $a_i$ zurückgibt und $\emph{minimumPrice}(a_i)$ eine Funktion die den kleinsten Preis für $a_i$ zurückgibt. Es wird eine weitere Liste $\emph{earylePurchaseList}$ anglegt, in die alle Artikel aufgenommen werden für die $\emph{articlePrice}(a_i) \leq \emph{averagePrice}(a_i) \cdot EP$ gilt.
+
+\end{itemize}
+
+Der Algorithmus kannt unter Verwendung der erweiterterten Heuristik folgendermaßen beschrieben werden. Alle Schritte werden $n$ mal ausgeführt, wobei $n$ die Nummer der Iterationen ist, respektive die Zahl der zu berechnenden Lösungen.
+
+\begin{enumerate}
+\item Deklariere $\emph{LeftArticles} := A$ als die Menge der Artikel, die noch nicht gekauft wurden
+
+\item Deklariere $\emph{UnvisitedShops} := G$ als die Menge der Geschäfte, die noch nicht besucht wurden
+
+\item Ermittle die Zufallszahl $X$
+
+\item Berechne für jedes Geschäft $g_j \in \emph{UnvisitedShops}$:
+
+\begin{enumerate}
+\item Falls $X > TA$, benutze die Basisheuristik, sonst: 
+
+$\emph{shoppingList}$ enthält für jdes Geschäfte $g_j$ alle Artikel die dort am $\lfloor AA \cdot k\rfloor$-günstigsten angeboten werden:
+\[ \emph{shoppingList}(g_j) = \Bigr[ a_i\ \big|\ a_i \leftarrow \emph{leftArticles} \wedge \bigvee_{n=0}^{\lfloor AA \cdot k\rfloor} g_j = \emph{cheapestShops}(a_i)[n] \Bigl]  \]
+
+\item ermittle $\emph{purchaseCosts}$ für alle $\emph{shopingList}(g_j)$ durch aufsummieren aller Artikelpreise in $g_j$:
+
+\begin{center}
+$\emph{purchaseCost}(g_j) = \sum_{a_i \in\ \emph{shoppingList}(g_j)} \emph{articlePrice}(i,j)$
+\end{center}
+
+\item ermittle $\emph{earlyPurchaseList}$ für alle $g_j$ die Artikel enthalten für die gilt:
+\[ \emph{earlyPurchaseList}(g_j) = \Bigr[ a_i\ \big|\ a_i \leftarrow \emph{leftArticles} \wedge \emph{articlePrice}(a_i) \leq \emph{averagePrice}(a_i) \cdot EP \Bigl]  \]
+\end{enumerate}
+
+\item Ermittle die Zufallszahl $Y$: Falls $Y > TS$, benutze die Basisheuristik, sonst:
+
+Ermittle die normalverteilte Zufallszahl $Z$ und wähle das Geschäft $g_{\emph{next}}$ mit dem $\lfloor Z \cdot k\rfloor$-größten Wert für
+\[ \emph{purchaseCost}(g_j) - \emph{travelCosts}(\emph{currentLocation},j) \]
+für alle Geschäfte $g_j \in \emph{UnvisitedShops}, k=|UnvisitedShops|$
+
+
+\item Gehe zu Geschäft $g_{\emph{next}}$ und setze $\emph{currentLocation} := g_{next}$ und entferne $g_{\emph{next}}$ aus $\emph{UnivsitedShops}$
+
+\item Kaufe alle in $\emph{shoppingList}(g_{\emph{next}}) \cup \emph{earlyPurchaseList}(g_{\emph{next}})$ enthaltenden Artikel und entferne sie aus \emph{leftArticles}
+
+\item Wiederhole Schritte (4) bis (7) solange $\emph{leftArticles}$ nicht leer ist
+\end{enumerate}
+
+Der folgende Pseudocode beschreibt den Algorithmus mit der erweiterten Heuristik:
+
+\begin{algorithm}
+$\emph{LeftArticles} \gets A$\;
+$\emph{UnvisitedShops} \gets G$\;
+$\emph{Route} \gets \varnothing$\;
+$X \gets \emph{random()}$\;
+\While{$\emph{LeftArticles} \not= \varnothing$}
+{
+	\ForEach{$g_j$ \bf{in} $\emph{UnvisitedShops}$}
+	{
+          $k \gets |UnvisitedShops|$\;
+ 	  \If{$X > TA$}
+	  {
+	    $\emph{shoppingList}(g_j) = [ a_i\ |\ a_i \leftarrow \emph{leftArticles} \wedge g_j = \emph{first(cheapestShops}(a_i)) ]$\;
+	  }
+          \Else
+          {
+            \emph{shoppingList}$(g_j) = []$\;
+	    \ForEach{$a_i$ \bf{in} \emph{LeftArticles}}
+            {
+	      \For{$n := 0$ \KwTo $\lfloor AA \cdot k \rfloor$}
+              {
+		\If{$g_j = $\emph{ cheapestShops}$(a_i).get(n)$}
+                {
+		  \emph{shoppingList$(g_j)$.add}$(a_i)$\;
+                  \bf{break}\;
+                }
+              }
+            }
+            $\emph{earlyPurchaseList}(g_j) = [ a_i\ |\ a_i \leftarrow \emph{leftArticles} \wedge \emph{articlePrice}(a_i) < \emph{averagePrice}(a_i) \cdot EP]$
+          }
+	  $\emph{purchaseCost}(g_j) = \sum_{a_i \in\ \emph{shoppingList}(g_j)} \emph{prices}(i,j)$\;
+          $Y \gets $ \emph{random()}\;
+	  $\emph{shopCandidates}[j] = \emph{purchaseCost}(g_j) - \emph{travelCost}(\emph{currentLocation},j)$\;
+          \If{$Y > TS$}
+          {
+            $g_{\emph{next}} \gets max(\emph{shopCandidates})$\;
+          }
+          \Else
+          {
+	    $Z \gets $ \emph{random()}\;
+            $g_{\emph{next}} \gets max(\emph{shopCandidates},\lfloor Z \cdot k\rfloor)$\;
+          }
+        }
+	\emph{Move to shop $g_{\emph{next}}$}\;
+        \emph{UnvisitedShops.delete}$(g_{next})$\;
+        \emph{articles} $\gets \varnothing$\;
+	\ForEach{$a_i$ \bf{in} $shoppingList(g_{\emph{next}}) \cup \emph{earlyPurchaseList}(g_j)$}
+	{
+		$\emph{articles} \gets \emph{articles} \cup \{ a_i \}$
+	}
+        $\emph{Route.put}(g_{\emph{next}},articles)$\;
+}
+\Return $Route$
+\caption{{\sc GreedyAdvanced} Greedy Algorithmus mit erweiterter Heuristik}
+\label{alg:greedy_advanced}
+\end{algorithm}
+
+\paragraph{Komplexitätsanalyse}
+
+Auch für die erweiterter Heuristik gilt, der schlechteste Fall tritt ein, wenn jeder Artikel in einem anderen Geschäft gekauft werden muss. Ein weiteres Kriterium ist die Unterscheidung zwischung Verwendung der grundlegenden Heurstik und der erweiterten Heuristik. Der schlechteste Fall tritt hier ein, wenn in jedem Fall die erweiterte Heuristik verwendet wird, da hier mehr Operationen ausgeführt werden müssen:
+
+\begin{itemize}
+\item Zeile 1-4 Zuweisung $O(1)$
+\item Zeile 5-31 Schleife $|A|$ mal
+\begin{itemize}
+\item Schleife 6-25 Schleife $O(|G|)$ mal
+
+\begin{itemize}
+\item Zeile 7 Zuweisung $O(1)$
+\item Zeile 8 Bedienungsüberprüfung $O(1)$
+\item Zeile 11 Zuweisung $O(1)$
+\item Zeile 12-16 Schleifen $O(|A| \cdot |G|)$
+\item Zeile 17 Zuweisung $O(|A|)$
+\item Zeile 18-20 Zuweisung $3 \cdot O(1)$
+\item Zeile 21 Bedinungsüberprüfung $O(1)$
+\item Zeile 24-25 Zuweisung $2 \cdot O(1)$
+\end{itemize}
+
+\item Zeile 26 Zuweisungen $O(1)$
+\item Zeile 27 Löschen eines Elements aus der Liste: $O(1)$ (armotisiert)
+\item Zeile 28 Zuweisung $O(1)$
+\item Zeile 29-30 Schleife $O(1)$ mal
+\begin{itemize}
+\item Zeile 29 Schleifentermination $O(1)$
+\item Zeile 30 Zuweisung $O(1)$
+\end{itemize}
+\item Zeilen 31 Erstellen der Einkaufsliste $O(1)$
+
+\end{itemize}
+\end{itemize}
+
+Auf diese Weise erhalten wir eine gesamte Laufzeit von:
+\begin{align*}
+& = 4 + |A| \cdot (O(|G| \cdot (O(1) + O(1) + O(1) + O(|A| \cdot |G|) + O(|A|) + 6 \cdot O(1)) + 5 \cdot O(1))\\
+& = 4 + |A| \cdot (O(|G|) \cdot (9 + O(|A|) \cdot O(|G|) + O(|A|)) + 5)\\
+& = 4 + |A| \cdot (9 \cdot O(|G|) + O(|G|^2) \cdot O(|A|) + O(|G|) \cdot O(|A|) + 5)\\
+& = 4 + 9 \cdot O(|A|) \cdot O(|G|) + O(|A|^2) \cdot O(|G|^2) + O(|A|^2) \cdot O(|G|) + 5 \cdot O(|A|)\\
+& \in O(|A|^2 \cdot |G|^2 + |A|^2 \cdot |G| + |A| \cdot |G|)
+\end{align*}
+
+\subsubsection{Gesamte Laufzeitanalyse}
+
+Der Greedy Algorithmus wurde bereits in seiner Zeitkomplexität eingeordnet, jedoch nur für eine Iteration des Algorithmus und bei gegebenen Daten auf denen der Algorithmus arbeitet. Nun wird die Laufzeit in der gesamten Anwendung betrachtet:
+
+\begin{itemize}
+\item \textsc{FloydWarshall} benötigt $O(|G|^3)$
+
+\item Die Initialisierung von $cheapestShops$ und $cheapestArticles$ benötigt $O(|G| + |A|)$
+
+\item Die Anzahl der Iterationen bevor die beste Route zurückgegeben wird ist durch den Parameter $M$ festgelegt
+
+Damit entsteht eine Laufzeit von:
+\[ O(|G|^3 + |G| + |A| + M \cdot(O(|A|^2 \cdot |G| + |A| \cdot |G|)) \]
+\end{itemize}
+
+\subsubsection{Beispiele}
+
+Um zu verstehen, wie sich die Parameter auf die Route und die Einkaufskosten auswirken besprechen wir zunächst ein kleines jedoch vielseitiges Beispiel bevor wir uns die Szenarien angucken. 
+Gegeben sind die folgenden Artikel- und Fahrtkosten:
+
+\begin{table}[H]
+\centering
+\subfloat[Article prices][Artikelkosten]{
+\begin{tabular}{cccccc}
+\toprule
+Artikel/Geschäfte & Menge & $g_1$ & $g_2$ & $g_3$\\
+\midrule
+$a_1$          & 1     & 5     & 4     & 3     \\
+$a_2$          & 1     & 5     & 6     & 7     \\
+$a_3$          & 1     & 5     & 1     & 2     \\
+\bottomrule
+\end{tabular}}
+\qquad
+\subfloat[Travel expenses][Fahrtkosten]{
+\begin{tabular}{cccccc}
+\toprule
+Fahrtkosten & $g_0$ &  $g_1$ &  $g_2$ &  $g_3$ \\
+\midrule
+$g_0$           & 0     & 1      & 3*     & 4   \\
+$g_1$           & 1     & 0      & 2      & 5*   \\
+$g_2$           & 3*    & 2      & 0      & 3   \\
+$g_3$           & 4     & 5*     & 3      & 0   \\
+\bottomrule
+\end{tabular}}
+\caption{Einführungsbeispiel, 3 Artikel werden 3 Geschäften angeboten. Fahrtkosten mit * sind berechnete Kantengewichte.}
+\label{tab:no_travel_expenses}
+\end{table}
+
+\paragraph{Basisheuristik} Zunächst wird der Algorithmus von Floyd-Warhshall angewendet um die 2 fehlenden Kantengewichte(*) zu bestimmen. Dabei ergeben sich die Fahrtkosten von $g_0$ nach $g_2$ über $g_1$ und die Route von $g_1$ nach $g_3$ verläuft über $g_0$. Wir betrachten zunächst die Basisheuristik, in der keiner der 4 Parameter Einfluss auf die Berechnung nimmt.
+
+\vskip 2ex
+
+Im ersten Schritt ordnen wir jeden Artikel einen Laden zu, und zwar jenen Laden, der den Artikel am günstigsten anbietet. Diese Artikel bilden dann die \emph{shoppingList} pro Geschäft. Artikel $a_1$ ist am günstigsten in Geschäft $g_3$ zu erhalten, Artikel $a_2$ mit Kosten 5 in Geschäft $a_1$ und schließlich erhält man $a_3$ am besten in $g_2$ (1).
+
+\vskip 2ex
+
+Basierend auf \emph{shoppingList} entstehen \emph{purchaseCost} (2) und werden noch mit den Fahrtkosten verrechnet (3-4) . Wie beschrieben berechnet sich das Güte eines Geschäfts aus der Differenz aus \emph{purchaseCost} und \emph{travelCost} (4). es wird jener Markt gewählt, der die höchste Güte hat. Im ersten Schritt hat $g_1$ die höchste Güte, die Route verläuft über $g_1$ und alle Artikel von \emph{shoppingList} eingekauft, sprich $a_2$.
+
+\vskip 2ex
+
+Danach wird die Prozedur wiederholt. Mittels Basisheuristik ändert sich nichts, außer die \emph{travelCost}(7) und führen so zu einer anderen Güteverteilung der Geschäfte, sodass schlussendlich im zweiten Schritt Geschäft $g_2$ besucht und $a_3$ gekauft wird. Fehlt noch ein Artikel und es steht noch ein Geschäft zur Auswahl. Das Beispiel beschreibt den worst-case laufzeittechnisch. Die Kosten der fertigen Route betragen 19.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$\\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 1, alle Artikel benötigt}        \\
+&shoppingList            & $a_2$     & $a_3$     & $a_1$ & \qquad  & \qquad & (1)   \\
+&purchaseCost            & 5     & 1     & 3             & \qquad  & \qquad & (2)   \\
+&travelCost von $g_0$    & 1     & 3     & 4             & \qquad  & \qquad & (3)   \\
+&Güte                    & 4     & -2    & -1            & \qquad  & \qquad & (4)   \\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 2, $a_1, a_3$ benötigt}        \\
+&shoppingList            &      & $a_3$     & $a_1$      & \qquad  & \qquad & (5)     \\
+&purchaseCost            &      & 1     & 3              & \qquad & \qquad & (6)    \\
+&travelCost von $g_1$    &      & 2     & 5              & \qquad  & \qquad & (7)   \\
+&Güte                    &      & -1    & -2             & \qquad  & \qquad & (8)   \\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 3, $a_1$ benötigt}        \\
+&shoppingList            &      &       & $a_1$          & \qquad  & \qquad & (9)     \\
+&purchaseCost            &      &      & 3               & \qquad  & \qquad & (10)   \\
+&travelCost von $g_2$    &      &      & 3               & \qquad  & \qquad & (11)   \\
+&Güte                    &      &      & 0               & \qquad  & \qquad & (12)    \\
+\bottomrule
+\end{tabular}
+\caption{Ablauf der Entscheidungen}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                   &       &       &     \\
+                & Gehe zu $g_1$     &   1    &       &  1   \\
+$g_1$           & Kaufe $a_2$       &       &   5    &  6   \\
+                & Gehe zu $g_2$     &   2    &       &  8   \\
+$g_2$           & Kaufe $a_3$       &       &   1    &  9   \\
+                & Gehe zu $g_3$     &   3    &       &  12   \\
+$g_3$           & Kaufe $a_1$       &       &   3    &  15   \\
+                & Gehe zu $g_0$     &   4    &       &  19   \\
+\midrule
+Summe           &                   &   10   &  9   & 19 \\
+\bottomrule
+\end{tabular}
+\caption{Aufschlüsselung der Gesamtkosten}
+\end{table}
+
+\paragraph{Erweiterung um \emph{Tendency Articles} und \emph{Additional Articles}}
+
+Im folgenden wird der Algorithmus um die Parameter \emph{Tendency Articles} und \emph{Additional Articles} erweitert. Das setzen von \emph{Tendency Articles} ist in diesem Beispiel von weniger Bedeutung, da wir so tun werden, dass unsere Zufallszahl die Bedingung erfüllt und nicht die Basisheuristik verwendet wird. Durch \emph{Additional Articles} (\emph{AA}) bestimmen wir, wie vielen Geschäften ein Artikel zugeordnet wird. \emph{AA} sei $70\%$, $k$ ist $3$, jeder Artikel wird somit $\lfloor AA \cdot k\rfloor = \lfloor 0,7 \cdot 3\rfloor = \lfloor 2,1\rfloor = 2$ Geschäften zugeordnet. Für den ersten Schritt bedeutet dies, dass Artikel $a_1$ nicht nur Geschäft $g_3$ zugeschrieben wird, sondern nun zusätzlich auch $g_2$, da dieses Geschäft den zweitbesten Preis hat.
+
+\vskip 2ex 
+
+Analog werden auch die anderen beiden Artikel einem weiteren Geschäft zugeordnet (1). Die \emph{purchaseCost} werden analog berechnet, indem für jedes Geschäft die entsprechenden Preise summiert werden. In diesem Beispiel führt dies dazu, dass $g_2$ mit allen Artikeln die höchste Güte erhält (4). Dadurch dass alle Artikel sofort in $g_2$ gekauft werden, ist der Algorithmus schnell fertig und hat durch geringere \emph{travelCost} einen Gesamtpreisvorteil gegenüber der Basisheuristik mit Kosten von 17.
+
+\begin{table}[H]
+\centering
+\subfloat[.][Ablauf der Entscheidungen]{
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$\\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 1, alle Artikel benötigt}        \\
+&shoppingList            & $a_2$     & $a_1,a_2,a_3$     & $a_1,a_3$ & \qquad  & \qquad & (1)   \\
+&purchaseCost            & 5     & 11     & 5             & \qquad  & \qquad & (2)   \\
+&travelCost von $g_0$    & 1     & 3     & 4             & \qquad  & \qquad & (3)   \\
+&Güte                    & 4     & 8    & 1            & \qquad  & \qquad & (4)   \\
+\bottomrule
+\end{tabular}}
+\\
+\qquad
+\\
+\subfloat[.][Aufschlüsselung der Gesamtkosten]{
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                   &       &       &     \\
+                & Gehe zu $g_2$     &   3    &       &  3   \\
+$g_2$           & Kaufe $a_1, a_2, a_3$       &       &   11    &  14   \\
+                & Gehe zu $g_0$     &   3    &       &  17   \\
+\midrule
+Summe           &                   &   6   &  11   & 17 \\
+\bottomrule
+\end{tabular}}
+\caption{Einkaufsentscheidung und -verlauf bei erweiterter Heuristik (50/70/0/0)}
+\label{tab:no_travel_expenses}
+\end{table}
+
+\paragraph{Erweiterung um \emph{Tendency Shop}}
+Das obige Beispiel wird erneut erweitert um \emph{Tendency Shop} um zu verhindern, dass immer dieselbe Route gewählt wird. Dazu nehmen wir wieder an, dass unsere Zufallszahlen die Bedingungen erfüllen. Das Beispiel folgt dabei dem gleichen Ablauf bis es zur Auswahl des Geschäfts geht, indem nun eingekauft werden soll. Im ursprünglichen Beispiel wurde entschieden zu $g_2$ zu gehen. Im ersten Schritt trifft es nun jedoch das zweitbeste Geschäft $g_1$ und es wird nur $a_2$ eingekauft.
+
+\vskip 2ex
+
+Für den nächsten Schritt werden wieder neue Fahrtkosten betrachtet und die verbleibenden Geschäfte werden gerankt. Erneut wird nicht das temporär beste Geschäft gewählt, sondern das Schlechteste $g_3$. Es sind nun alle Artikel eingekauft und die Gesamtkosten belaufen sich auf $20$. Damit ist diese Route die bislang schlechteste Route unter den drei vorgestellten.
+
+
+\begin{table}[H]
+\centering
+\subfloat[.][Ablauf der Entscheidungen]{
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$\\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 1, alle Artikel benötigt}        \\
+&shoppingList            & $a_2$  & $a_1,a_2,a_3$     & $a_1,a_3$ & \qquad  & \qquad & (1)   \\
+&purchaseCost            & 5     & 11     & 5             & \qquad  & \qquad & (2)   \\
+&travelCost von $g_0$    & 1     & 3     & 4             & \qquad  & \qquad & (3)   \\
+&Güte                    & 4     & 8    & 1            & \qquad  & \qquad & (4)   \\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 2, $a_1,a_3 $ benötigt}        \\
+&shoppingList            &      & $a_1,a_3$     & $a_1,a_3$ & \qquad  & \qquad & (5)   \\
+&purchaseCost            &      & 5    & 5             & \qquad  & \qquad & (6)   \\
+&travelCost von $g_1$    &      & 2    & 5             & \qquad  & \qquad & (7)   \\
+&Güte                    &      & 3    & 0            & \qquad  & \qquad & (8)   \\
+\bottomrule
+\end{tabular}}
+\\
+\qquad
+\\
+\subfloat[.][Aufschlüsselung der Gesamtkosten]{
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                   &       &       &     \\
+                & Gehe zu $g_1$     &   1    &       &  1   \\
+$g_1$           & Kaufe   $a_2$       &       &   5    &  6   \\
+                & Gehe zu $g_3$     &   5    &       &  11   \\
+$g_3$           & Kaufe   $a_1,a_3$       &       &   5    &  16   \\
+                & Gehe zu $g_0$     &   4    &       &  20   \\
+
+\midrule
+Summe           &                   &   10   &  10  & 20 \\
+\bottomrule
+\end{tabular}}
+\caption{Einkaufsentscheidung und -verlauf bei erweiterter Heuristik (50/70/40/0)}
+\label{tab:no_travel_expenses}
+\end{table}
+
+
+\paragraph{Beispiel 1 erweitert um \emph{Early Purchaser}} Für die letzte Erweiterung nutzen wir wieder das erste Beispiel mit Basisheuristik. Durch \emph{Early Purchase} sollen Artikel die ähnliche Preise in Geschäften haben auch zu nicht-optimalen Konditionen gekauft werden, um so u.U. Reisekosten zu sparen. Wir betrachten den Extremfall dass $\emph{EP}=100$ ist, sodass alle Artikel zusätzlich zur \emph{shoppingList} gekauft werden, falls sie nicht mehr als der Durchschnitt kosten.
+
+\vskip 2ex
+
+Der Anfang verhält sich analog zur Basisheuristik. Die drei Artikel werden jeweils genau einem Geschäft zugeordnet, Fahrtkosten werden verrechnet und die Güte der Geschäfte berechnet. Zusätzlich werden jedoch noch die \emph{Early Purchase}-Listen gefüllt. Wichtig ist, dass diese für die Güte unerheblich sind und keinen Einfluss auf die Entscheidung haben(4). Erst bei Besuch eines Geschäfts werden weitere Artikel von der Liste gekauft. Somit geht die Route in Schritt 1 wieder über Geschäft $g_1$, es wird jedoch nur $a_2$ gekauft. $a_1$ und $a_3$ kosten in $g_1$ mehr als der Durchschnitt und werden daher nicht gekauft (5).
+
+\vskip 2ex
+
+Bei $g_1$ angekommen werden wieder Fahrtkosten neu verrechnet mit \emph{shoppingList} und diesmal Geschäft $g_2$ gewählt(9) (bislang also noch 1:1 analog zur Basisheuristik). Dort angekommen wird aber zusätzlich noch der Artikel $a_1$ mitgekauft, da er glücklicherweise genauso teuer ist wie sein Durchschnitt.(10) Da nun alle Artikel von der Einkaufsliste enthalten sind, kann die Route abgeschlossen werden und hat mit Gesamtkosten von 16 die beste Lösung produziert.\\
+
+\begin{table}[H]
+\centering
+\subfloat[.][Ablauf der Entscheidungen]{
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$\\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 1, alle Artikel benötigt}        \\
+&shoppingList            & $a_2$  & $a_3$     & $a_1$ & \qquad  & \qquad & (1)   \\
+&purchaseCost            & 5     & 1     & 3             & \qquad  & \qquad & (2)   \\
+&travelCost von $g_0$    & 1     & 3     & 4             & \qquad  & \qquad & (3)   \\
+&Güte                    & 4     & -2    & -1            & \qquad  & \qquad & (4)   \\
+&earlyPurchase           &      & $a_1,a_2$   &  $a_3$             & \qquad  & \qquad & (5)   \\
+\cmidrule(r){2-5}
+\multirow{4}{*}{Schritt 2, $a_1,a_3 $ benötigt}        \\
+&shoppingList            &      & $a_3$     & $a_1$ & \qquad  & \qquad & (6)   \\
+&purchaseCost            &      & 1    & 3             & \qquad  & \qquad & (7)   \\
+&travelCost von $g_1$    &      & 2    & 5             & \qquad  & \qquad & (8)   \\
+&Güte                    &      & -1    & -2            & \qquad  & \qquad & (9)   \\
+&earlyPurchase           &      & $a_1$  &   $a_3$           & \qquad  & \qquad & (5)   \\
+\bottomrule
+\end{tabular}}
+\\
+\qquad
+\\
+\subfloat[.][Aufschlüsselung der Gesamtkosten]{
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                   &       &       &     \\
+                & Gehe zu $g_1$     &   1    &       &  1   \\
+$g_1$           & Kaufe   $a_2$       &       &   5    &  6   \\
+                & Gehe zu $g_2$     &   2    &       &  8   \\
+$g_2$           & Kaufe   $a_1,a_3$       &       &   5    &  13   \\
+                & Gehe zu $g_0$     &   3    &       &  16   \\
+
+\midrule
+Summe           &                   &   6   &  10  & 16 \\
+\bottomrule
+\end{tabular}}
+\caption{Einkaufsentscheidung und -verlauf bei erweiterter Heuristik (0/0/0/100)}
+\label{tab:no_travel_expenses}
+\end{table}
+
+\subsubsection{Szenarien}
+Nun sollte klar sein, wie sich die Parameter auf die einzelnen Listen und die allgemeine Routenplanung auswirkt. Im Dokument über \emph{Qualitätssicherung} gehen wir genauer darauf ein, wie wir mittels der Benchmarks auf die folgenden Parameterisierungen gekommen sind. Vorerst geben wir nur unsere Konfigurationen and besprechen dann kurz ein größeres Beispiel. Wir nutzen erneut die Beispieldaten von oben und erweitern sie um 2 Geschäfte sowie auf insgesamt 10 Artikel.
+
+\begin{table}[H]
+\centering
+\subfloat[Article prices][Artikelkosten]{
+\begin{tabular}{ccccccccc}
+\toprule
+A/G & Menge & $g_1$ & $g_2$ & $g_3$ & $g_4$& $g_5$ & $\varnothing$ \\
+\midrule
+$a_1$          & 1     & 5     & 4     & 3   &  6  & 6  &   4,8  \\
+$a_2$          & 1     & 5     & 6     & 7   &  8  & 8  &   6,8  \\
+$a_3$          & 1     & 5     & 1     & 2   &  5  & 5  &   3,6  \\
+$a_4$          & 1     & 5     & 5     & 5   &  5  & 5  &   5,0  \\
+$a_5$          & 1     & 11    & 12    &10   & 13  & 14 &   12   \\
+$a_6$          & 1     & 27    &       & 20  & 23  & 22 &   23   \\
+$a_7$          & 1     & 12    & 25    & 5   &     &    &   14   \\
+$a_8$          & 1     &       &       & 25  &  4  &  3 &   10,6 \\
+$a_9$          & 1     &       &       &     & 40  &    &   40   \\
+$a_10$         & 1     & 15    & 13    & 14  & 11  & 10 &   12,6 \\
+\bottomrule
+\end{tabular}}
+\subfloat[Travel expenses][Fahrtkosten]{
+\begin{tabular}{ccccccccc}
+\toprule
+Fahrtkosten & $g_0$ &  $g_1$ &  $g_2$ &  $g_3$ & $g_4$ & $g_5$ \\
+\midrule
+$g_0$           & 0     & 1      & 3*     & 4  & 5  & 9*\\
+$g_1$           & 1     & 0      & 2      & 5* & 5  & 8 \\
+$g_2$           & 3*    & 2      & 0      & 3  & 7* & 9 \\
+$g_3$           & 4     & 5*     & 3      & 0  & 9* & 12* \\
+$g_4$           & 5     & 5      & 7*     & 9*  & 0  & 10 \\
+$g_5$           & 9*    & 8      & 9      & 12* & 10 & 0 \\
+
+\bottomrule
+\end{tabular}
+}
+\caption{Einführungsbeispiel, 3 Artikel werden 3 Geschäften angeboten. Fahrtkosten mit * sind berechnete Kantengewichte.}
+\label{tab:no_travel_expenses}
+\end{table}
+
+\paragraph{Keine Fahrtkosten} Für dieses Szenario sehen wir vor die einfache Basisheuristik zu verwenden (sprich jeder Parameter ist 0). Wir belassen TA/AA damit Artikel nur den besten Geschäften zugeordnet werden und solche dann auch nur besucht werden. Interessanterweise spielt in diesem Szenario keine Rolle welchen Wert TS annimmt, daher nehmen wir den Basisfall. Das Setzen von TS würde dazu führen, dass wir nicht das temporär beste Geschäft besuchen, sondern eines mit schlechterer Güte.
+
+\vskip 2ex
+
+Da wir jedoch nur Artikel Geschäften zugeordnet haben, würden wir in diesem 'schlechterem' Geschäft sowieso andere Artikel kaufen (da TA/AA=0) und die Artikel die gekauft werden, gibt es nirgendwo günstiger. Daher ändert TS nur die Reihenfolge in der die Geschäfte besucht werden und da wir keine Fahrtkosten haben, ist dies also irrelevant. EP bleibt ebenfalls 0, da wir vermeiden wollen Artikel zu kaufen die unter einem gewissen Schwellwert liegen, da wir später Geschäfte besuchen, die verbleibende Artikel zu besten Preisen anbieten.
+
+\vskip 2ex
+
+Der Algorithmus verhält sich jedoch wie in den Beispielen schon beschrieben, mit dem Unterschied, dass bei der Berechnung der Güte eben die Distanzen als 0 angenommen werden und somit allein die \emph{purchaseCost} eine Rolle spielen. Der Ablauf der Entscheidungen und die fertige Route würden für das Beispiel wie folgt aussehen:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$ & $g_4$ & $g_5$\\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{4cm}{Schritt 1, Ort: $g_0$ \newline alle Artikel benötigt}}        \\
+&shoppingList            & $a_2,a_4$    & $a_3,a_4$  & $a_1,a_4,a_5,a_7$ & $a_4,a_6,a_9$ & $a_4,a_8,a_{10}$  \\
+&purchaseCost            & 10           &   6        &        23         &    65         &    18   \\
+&Güte                    & 10           &   6        &        23         &    65         &    18   \\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{4cm}{Schritt 2, Ort: $g_4$ \newline Artikel $a_1,a_2,a_3,a_5,a_7,a_8,a_{10}$ benötigt}}        \\
+&shoppingList            & $a_2$       & $a_3$      & $a_1,a_5,a_7$     &                & $a_8,a_{10}$  \\
+&purchaseCost            & 5           &   1        &        18         &                &    13   \\
+&Güte                    & 5           &   1        &        18         &                &    13   \\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{4cm}{Schritt 3, Ort: $g_3$ \newline Artikel $a_2,a_3,a_8,a_{10}$ benötigt}}        \\
+&shoppingList            & $a_2$       & $a_3$      &                   &                & $a_8,a_{10}$  \\
+&purchaseCost            & 5           &   1        &                   &                &    13   \\
+&Güte                    & 5           &   1        &                   &                &    13   \\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{4cm}{Schritt 4, Ort: $g_5$ \newline Artikel $a_2,a_3$ benötigt}}        \\
+&shoppingList            & $a_2$       & $a_3$      &                   &                &   \\
+&purchaseCost            & 5           &   1        &                   &                &   \\
+&Güte                    & 5           &   1        &                   &                &   \\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{4cm}{Schritt 5, Ort: $g_1$ \newline Artikel $a_3$ benötigt}}        \\
+&shoppingList            &       & $a_3$      &                   &                &   \\
+&purchaseCost            &            &   1        &                   &                &   \\
+&Güte                    &            &   1        &                   &                &   \\
+\cmidrule(r){2-7}
+
+\bottomrule
+\end{tabular}
+\caption{Ablauf der Entscheidungen für Szenario \emph{keine Fahrtkosten}}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                    &       &       &     \\
+                & Gehe zu $g_4$       &   0    &       &  0   \\
+$g_4$           & Kaufe $a_2,a_6,a_9$ &       &   65    &  65   \\
+                & Gehe zu $g_3$       &   0    &       &  65   \\
+$g_3$           & Kaufe $a_1,a_5,a_7$ &       &   18    & 83     \\
+                & Gehe zu $g_5$      &   0    &       &  83   \\
+$g_5$           & Kaufe $a_8,a_{10}$ &       &   13    &  96   \\
+                & Gehe zu $g_1$     &   0    &       &  96   \\
+$g_1$           & Kaufe $a_2$       &       &   5    &  101   \\
+                & Gehe zu $g_2$     &   0    &       &  101   \\
+$g_2$           & Kaufe $a_3$       &       &   1    &  102   \\
+                & Gehe zu $g_0$     &   0    &       &  102   \\
+\midrule
+Summe           &                   &   0   &  102   & 102 \\
+\bottomrule
+\end{tabular}
+\caption{Aufschlüsselung der Gesamtkosten für Szenario \emph{keine Fahrtkosten}}
+\end{table}
+
+\paragraph{Wähle nur ein Geschäft}
+Für dieses Szenario ist es zunächst wichtig, dass alle Artikel in mind. einem Geschäft angeboten werden. Dies ist hier nicht der Fall, daher reduzieren wir unseren Bedarf auf jene Artikel die überall angeboten werden, also $a_1, a_2, a_3, a_4, a_5, a_{10}$.Die ersten beiden Parameter für dieses Szenario setzen wir auf 100. Grund ist, wir wollen nur ein Geschäft besuchen und müssen daher die Güte für ein Geschäftt über alle Artikel machen (daher AA=100 und TA=100 damit auch AA zum Einsatz kommt). Der Parameter EP bleibt erneut 0, da ohnehin alle Artikel schon in \emph{shoppingList} und somit kein Artikel früher eingekauft werden könnte.
+
+\vskip 2ex
+
+TS bleibt erneut 0, da wir ja das beste Geschäft besuchen wollen. Berechnet man nach diesen Parametern die Route so wird man feststellen, dass man in Wirklichkeit die schlechteste Route wählt. Warum ? Dies liegt in der Natur des Greedy-Algorithmus und der Art der Güteberechnung. Zusammengefasst gehen wir stets zum Geschäft mit der höchsten Güte, da wir normalerweise davon ausgehen, dass die Zuordnung der Güte basiert auf den Artikeln die global am günstigsten sind. Für dieses Szenario sind jedoch alle Artikel an der Berechnung der Güte beteiligt. Ein Geschäft mit hoher Güte ist somit die schlechteste Wahl. In der folgenden Berechnung wird klar, warum ein Workaround nötig ist.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$ & $g_4$ & $g_5$\\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{2,5cm}{Schritt 1 \newline Ort: $g_0$ \newline Artikel $a_1-a_5,a_{10} $ \newline benötigt}}        \\
+&shoppingList            & $a_1-a_5, a_{10}$    & $a_1-a_5, a_{10}$   & $a_1-a_5, a_{10}$  & $a_1-a_5, a_{10}$  & $a_1-a_5, a_{10}$   \\
+&purchaseCost            & 46                 &   41       &        41        &    48         &    48   \\
+&travelCost              & 1                  &   3        &        4         &    5         &    9   \\
+&Güte                    & 45                 &   38        &       37         &    43         &   39   \\
+&erw. Güte               & -48                 &  -47        &      -49        &   -58        &   -66   \\
+\bottomrule
+\end{tabular}
+\caption{Ablauf der Entscheidungen für Szenario 'Wähle nur ein Geschäft'}
+\end{table}
+
+Nach dem normalen Verfahren würden wir zu Geschäft $g_1$ gehen und danach zurück. Dies ist jedoch nicht die optimale Lösung, diese wäre zu Geschäft $g_2$ zu gehen, bei der man 1 Kosteneinheit sparen würde. Um dies zu erreichen könnte man a) TS auf 100 setzen und hoffen, dass man zufällig ein Geschäft somit am wenigsten bezahlt, jedoch ist dies nur selten von Erfolg gekrönt. Daher muss für dieses Szenario der Algorithmus erweitert werden, wobei allein due Güteberechnung verändert werden muss. Dazu wird die Güte neu interpretiert und beschreibt nun die Gesamtkosten, sprich auf \emph{purchaseCost} soll \emph{travelCost} nicht abgezogen sondern 2mal draufaddiert werden. Um den Rest des Codes beizuhalten muss die Berechnung der Güte noch invertiert werden, damit der bis dato niedrigste (und somit bestes Geschäft) die höchste Güte erhält.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                    &       &       &     \\
+                & Gehe zu $g_2$       &   3    &       &  3   \\
+$g_4$           & Kaufe $a_1-a_5,a_{10}$ &       &   41    &  44   \\
+                & Gehe zu $g_0$       &   3    &       &  47   \\
+\midrule
+Summe           &                   &   6   &  41   & 47 \\
+\bottomrule
+\end{tabular}
+\caption{Aufschlüsselung der Gesamtkosten für Szenario 'Wähle nur ein Geschäft'}
+\end{table}
+
+
+\paragraph{Hohe Fahrtkosten} Gleiche Artikeldaten jedoch erhöhen wir die Fahrtkosten um 20 pro vorgegebene Kante und berechnen die indirekten Kanten neu. (Hinweis: Die Route von $g_3$ nach $g_5$ verläuft nun nichtmehr über $g_2$ und $g_1$ sondern nur über $g_2$).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+\toprule
+Fahrtkosten & $g_0$ &  $g_1$ &  $g_2$ &  $g_3$ & $g_4$ & $g_5$ \\
+\midrule
+$g_0$           & 0     & 21      & 43*     & 24  & 25  & 49*\\
+$g_1$           & 21     & 0      & 22      & 45* & 25  & 28 \\
+$g_2$           & 43*    & 22      & 0      & 23  & 47* & 29 \\
+$g_3$           & 24     & 45*     & 23      & 0  & 49* & 52* \\
+$g_4$           & 25     & 25      & 47*     & 49*  & 0  & 30 \\
+$g_5$           & 49*    & 28      & 29      & 52* & 30 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Veränderte Kantengewichte für hohe Kantengewichte}
+\label{tab:no_travel_expenses}
+\end{table}
+
+Im Dokument \emph{Qualitätssicherung} wird genau beschrieben wie wir zur Parameterisierung kommen für dieses Szenario. Kurzum TA und AA erhalten die Werte 100 bzw. 60, um zu erreichen, dass viele Artikel mehreren Geschäften zugeordnet werden. TS=0 und EP setzen wir auf 100 um ebenfalls noch mehr einzukaufen, falls die Preise stimmen. \\
+Für dieses Beispiel bedeutet dies, dass jeder Artikel den besten $\lfloor 0,6 \cdot 5 \rfloor = 3$ Geschäften zugeordnet wird. \\ 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$ & $g_4$ & $g_5$\\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{2,5cm}{Schritt 1, Ort: $g_0$ \newline alle Artikel benötigt}}        \\
+&shoppingList            & $a_1-a_5,a_7$    & \parbox{2cm}{$a_1-a_5 \newline a_7,a_{10}$ }  & $a_1-a_8$  & \parbox{2cm}{ $a_3,a_4,a_6 \newline a_8-a_{10}$ }  & \parbox{2cm}{$a_3,a_4,a_6 \newline a_8,a_{10}$ }   \\
+&purchaseCost            & 43                 &   66        &       77         &    88         &    45  \\
+&travelCost              & 21                 &   43        &      24         &    25         &    49   \\
+&Güte                    & 22                 &   23        &       53         &    63         &   -4   \\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{2,5cm}{Schritt 2, Ort: $g_4$ \newline Artikel $a_1,a_2,a_5$ benötigt}}        \\
+&shoppingList            & $a_1,a_2,a_5$    & $a_1,a_2,a_5$   & $a_1,a_2,a_5$  &             &    \\
+&purchaseCost            & 21                 &   22        &       20         &             &    0  \\
+&travelCost              & 25                 &   47        &      49         &             &    30   \\
+&Güte                    & -4                 &    -25       &       -29         &             &   -30   \\
+\bottomrule
+\end{tabular}
+\caption{Ablauf der Entscheidungen für Szenario 'hohe Fahrtkosten'}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                    &       &       &     \\
+                & Gehe zu $g_4$       &   25    &       &  25   \\
+$g_4$           & Kaufe $a_3,a_4,a_6,a_8-a_{10}$ & & 88    &  113   \\
+                & Gehe zu $g_1$       &   25    &       &  138   \\
+$g_1$           & Kaufe $a_1,a_2,a_5$ &       &   21    &  159   \\
+                & Gehe zu $g_0$       &   21    &       &  180   \\
+\midrule
+Summe           &                   &   71   &  109   & 180 \\
+\bottomrule
+\end{tabular}
+\caption{Aufschlüsselung der Gesamtkosten für Szenario 'hohe Fahrtkosten'}
+\end{table}
+
+\paragraph{Alle Artikel sind in jedem Geschäft zu erwerben}
+Dieses Szenario haben wir vereint mit dem allgemeinen Fall, dass auch einige Artikel fehlen, da es für den Algorithmus keine Rolle spielt ob Artikel vorhanden sind oder nicht. Lediglich die Berechnung der Güte wird dadurch beeinflusst. Für allgemeine Fälle nutzen wir daher die folgende Parameterisierung:
+
+\begin{itemize}
+\item \textbf{35 TA} für einige Iteration sollen weitere Artikel hinzugezogen werden für die Berechnung der Güte
+\item \textbf{50 AA} falls weitere Artikel genommen werden, nimm $60\%$ weitere
+\item \textbf{50 TS} um unterschiedlichste Routen zu erhalten
+\item \textbf{30 EP} nur falls Artikel wirklich günstig sind, kaufe sie zusätzlich ein
+\end{itemize}
+
+Für die Beispieldaten könnte eine Route wie folgt aussehen:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccccccc}
+\toprule
+& & $g_1$ & $g_2$ & $g_3$ & $g_4$ & $g_5$\\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{2,5cm}{Schritt 1, Ort: $g_0$ \newline alle Artikel benötigt}}        \\
+&shoppingList            & $a_2,a_4,a_5,a_7$    & $a_1-a_4$  & $a_1,a_3-a_7$  & $ a_4,a_8-a_{10}$   & $ a_4,a_6,a_8,a_{10}$  \\
+&purchaseCost            & 33                &   16        &       45         &    60         &    40  \\
+&travelCost              & 1                 &   3        &      4         &    5         &    9   \\
+&Güte                    & 32                 &   13        &       41         &    55         &   31   \\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{2,5cm}{Schritt 2, Ort: $g_4$ \newline Artikel $a_1-a_3,a_5-a_7 $ benötigt}}        \\
+&shoppingList            & $a_2,a_5,a_7$    & $a_1-a_3$  & $a_1,a_3,a_5-a_7$  &             & $ a_6 $  \\
+&purchaseCost            & 28                &   11        &       40         &             &    22  \\
+&travelCost              & 5                &   7       &      9           &              &    10   \\
+&Güte                    & 23                 &   4        &       31         &            &   12   \\
+\cmidrule(r){2-7}
+\multirow{4}{*}{\parbox{2,5cm}{Schritt 3, Ort: $g_3$ \newline Artikel $a_2 $ benötigt}}        \\
+&shoppingList            & $a_2 $    & $a_2$  &   &             &  \\ 
+&purchaseCost            &  5               &   6        &             &             &      \\
+&travelCost              & 5                &   3       &               &              &     \\
+&Güte                    &  0                 &   3        &             &            &      \\
+\bottomrule
+\end{tabular}
+\caption{Ablauf der Entscheidungen für den allgemeinen Fall}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+Ort & Aktion & Fahrtkosten & Artikelkosten & Gesamtkosten \\
+\midrule
+$g_0 $          &                    &       &       &     \\
+                & Gehe zu $g_4$       &   5    &       &  5   \\
+$g_4$           & Kaufe $a_4,a_8-a_{10}$ &     & 60    &  65   \\
+                & Gehe zu $g_3$       &   9    &       &  74   \\
+$g_3$           & Kaufe $a_1,a_3,a_5-a_7$ &     & 40    &  114   \\
+                & Gehe zu $g_2$       &   3    &       &  117   \\
+$g_2$           & Kaufe $a_2$            &      & 6    &  123   \\
+                & Gehe zu $g_0$       &   3    &       &  126   \\
+\midrule
+Summe           &                   &   20   &  106   &  126  \\
+\bottomrule
+\end{tabular}
+\caption{Aufschlüsselung der Gesamtkosten für den allgemeinen Fall}
+\end{table}
+
+\section{Benutzeroberfläche}
+
+Eine grundlegende Frage im Entwurf der Benutzeroberfläche war: Wer ist die Zielgruppe? An den Endbenutzer der optimale Routen berechnen möchte oder an denjenigen der sich für die algorithmische Lösung des Problems interessiert. Tendenziell haben wir uns für Letzteres entschieden, da in der Aufgabenstellung explizit die Visualisierung des Optimierungsvorgangs gefordert war. Die Benutzeroberfläche haben wir so minimal wie möglich gehalten. Mit wenigen Optionen in jedem Schritt leiten wir den Benutzer durch die Anwendung.
+
+\vskip 2ex
+
+Die Szenarien \emph{Wähle nur ein Geschäft} und \emph{Keine Reisekosten} war Anlass für uns diese als Benutzereingaben zu interpretieren, d.h. es steht dem Benutzer frei, zu entscheiden ob er die Reisekosten betrachten möchte oder nicht.
+
+\section{Visualisierung}
+
+Der Algorithmus bzw. das berechnete Ergebnis wird auf zwei Arten visualisiert:
+
+\begin{itemize}
+\item \textbf{Ausgabe der Routen}: Nach dem eine Einkaufsroute berechnet wurde, wird nicht nur die beste zurückgegeben, sondern alle berechneten Routen (Anzahl der Iterationen). Auf diese Weise kann sich der Benutzer ein Bild machen, welche verschiedenen Lösungen durch den Algorithmus abgedeckt werden. Insbesondere kann der Benutzer sich in einem Graphen die verschiedenen Routen darstellen lassen und deren Zwischenschritte anzeigen lassen. Auf der linken Seite werden die Details der berechneten Route dargestellt. Dies geschieht in Anlehung an Google Maps, so dass durch Auswählen von Teilschritten diese im Graph hervorgehoben werden.
+
+\item \textbf{Algorithmus erklären}: Da es sich bei dem Greedy Algorithmus um keinen Optimierungsvorgang handelt, visualisieren wir stattessen die einzelnen Entscheidungen die im Algorithmus getroffen werden. Diese werden in einer Animation ausführlich erklärt. Auf diese Weise erhält der Benutzer detailierte Einsicht in den Entscheidungsprozess.
+
+\end{itemize}
+
+\bibliographystyle{alpha}
+\bibliography{design}
+
+\end{document}

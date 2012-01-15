@@ -1,0 +1,48 @@
+/*
+ * Style-Regeln die exklusiv vom Demo-Menüpunkt verwendet werden.
+ */
+
+.demoCase {
+    position: absolute;
+    width: 106px; height: 106px;
+    border-radius: 53px;
+    font: 48px/106px Helvetica, Arial, sans-serif;
+    text-align: center;
+    cursor: pointer;
+}
+
+.demoCase:before {
+    content: "#";
+}
+
+.demoCase:hover {
+    background-color: #EEE;
+    color: black;
+}
+
+.demoCase:active {
+    background-color: #C00;
+    color: white;
+}
+
+#.demoCase.col0 { left: 116px; }
+.demoCase.col0 { left: 174px; }
+#.demoCase.col1 { left: 232px; }
+.demoCase.col1 { left: 290px; }
+#.demoCase.col4 { left: 348px; }
+.demoCase.col2 { left: 406px; }
+#.demoCase.col6 { left: 464px; }
+.demoCase.col3 { left: 522px; }
+#.demoCase.col8 { left: 580px; }
+.demoCase.col4 { left: 638px; }
+
+
+#.demoCase.row0 { top: 116px; }
+.demoCase.row0 { top: 174px; }
+#.demoCase.row2 { top: 232px; }
+.demoCase.row1 { top: 290px; }
+#.demoCase.row4 { top: 348px; }
+.demoCase.row2 { top: 406px; }
+#.demoCase.row6 { top: 464px; }
+
+
