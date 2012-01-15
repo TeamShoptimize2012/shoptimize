@@ -1,0 +1,105 @@
+/**
+ * Style-Regeln die von allen Menüs gemainsam verwendet werden.
+ */
+
+input, textarea, a, .clickable {
+    cursor: pointer;
+}
+
+#homeButton {
+    top: 0; left: 0;
+    background-image: url("icons/home-48.png");
+}
+
+#backButton {
+    top: 0; left: 0;
+    background-image: url("icons/triangle-left.png");
+    width: 250px;
+}
+
+.button {
+    position: absolute;
+    width: 150px;
+    height: 48px;
+    left: 50%;
+    cursor: pointer;
+    background-color: white;
+    transition: background-color .4s;
+    -moz-transition: background-color .4s;
+    -webkit-transition: background-color .4s;
+    -o-transition: background-color .4s;
+    border-radius: 10px;
+}
+
+.button:hover {
+    background-color: #EEE;
+    transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
+    -o-transition: background-color .2s;
+}
+
+.button.iconButton {
+    padding-left: 68px;
+    height: 68px;
+    width: 400px;
+    font: 32px/68px "Helvetica", "Arial", sans-serif;
+    background-position: 10px 10px;
+}
+
+#factory {
+    display: none;
+}
+
+.textInput {
+    height: 46px;
+    border: none;
+    border-bottom: 2px solid black;
+    font: 32px/46px "Helvetica", "Arial", sans-serif;
+}
+
+.pic1  { background-image: url("icons/1-48.png"); }
+.pic2  { background-image: url("icons/2-48.png"); }
+.pic3  { background-image: url("icons/3-48.png"); }
+.pic4  { background-image: url("icons/4-48.png"); }
+.pic5  { background-image: url("icons/5-48.png"); }
+.pic6  { background-image: url("icons/6-48.png"); }
+.pic7  { background-image: url("icons/7-48.png"); }
+.pic8  { background-image: url("icons/8-48.png"); }
+.pic9  { background-image: url("icons/9-48.png"); }
+.pic10 { background-image: url("icons/10-48.png"); }
+.pic11 { background-image: url("icons/11-48.png"); }
+.pic12 { background-image: url("icons/12-48.png"); }
+.pic13 { background-image: url("icons/13-48.png"); }
+.pic14 { background-image: url("icons/14-48.png"); }
+.pic15 { background-image: url("icons/15-48.png"); }
+.pic16 { background-image: url("icons/16-48.png"); }
+
+.icon.shop.no0 { background-image: url("icons/home-48.png"); }
+.icon.shop.no1 { background-image: url("icons/shop1-48.png"); }
+.icon.shop.no2 { background-image: url("icons/shop2-48.png"); }
+.icon.shop.no3 { background-image: url("icons/shop3-48.png"); }
+.icon.shop.no4 { background-image: url("icons/shop4-48.png"); }
+.icon.shop.no5 { background-image: url("icons/shop5-48.png"); }
+.icon.shop.no6 { background-image: url("icons/shop6-48.png"); }
+.icon.shop.no7 { background-image: url("icons/shop7-48.png"); }
+
+.helpText {
+    font: 16px/20px "Helvetica", "Arial", sans-serif;
+    background: #EEE;
+    padding: 10px;
+    border: 1px solid #111;
+    border-radius: 15px;
+
+    position: absolute;
+    text-align: justify;
+}
+
+.helpText span {
+    display: block;
+    margin-bottom: .3em;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+}
+

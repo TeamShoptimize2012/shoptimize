@@ -1,0 +1,28 @@
+/**
+ * Style-Regeln die vom Start-Panel benutzt werden.
+ */
+
+.startPanel.iconButton {
+    margin-left: -179px;
+}
+
+#newButton {
+    top: 200px;
+    background-image: url("icons/new-48.png");
+}
+
+#demoButton {
+    top: 340px;
+    background-image: url("icons/scenario-48.png");
+}
+
+#dataButton {
+    top: 270px;
+    background-image : url("icons/load-48.png");
+}
+
+#explainButton {
+    top: 410px;
+    background-image: url("icons/learn-48.png");
+}
+

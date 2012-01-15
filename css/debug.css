@@ -1,0 +1,67 @@
+/**
+ * Style-Regeln zum Verstehen wie die Seite gerade aussieht.
+ */
+
+.debugButton {
+    width: 20px; height: 20px;
+    position: absolute; right: 10px;
+    cursor: pointer;
+    background: black; color: white;
+    text-align: center;
+}
+
+#vizDebugConf {
+    top: 10px;
+}
+
+#vizDebugPlay {
+    top: 40px;
+}
+
+#vizDebugPlay2 {
+    top: 70px;
+}
+
+#vizDebugReset {
+    top: 100px;
+}
+
+.vizDebug #vizCanvas {
+    outline: 1px solid #C00;
+}
+
+.vizDebug #messagePane {
+    outline: 1px solid #009;
+}
+
+.vizDebug .icon {
+    background-color: lime;
+}
+
+.vizDebug .bigIcon {
+    background-color: fuchsia;
+}
+
+.vizDebug .price {
+    outline: 1px solid aqua;
+}
+
+.vizDebug .disgraced {
+    outline: 1px solid maroon;
+}
+
+.vizDebug .button {
+    background-color: red;
+}
+
+.vizDebug .demoButton {
+    background-color: blue;
+}
+
+.vizDebug input[type="text"] {
+    background-color: lightyellow;
+}
+
+.vizDebug .tile {
+    outline: 1px solid lime;
+}

@@ -1,0 +1,16 @@
+body {
+        padding-top: 60px;
+}
+
+ul {
+        list-style: none;
+}
+
+li {
+        padding-bottom: 5px;        
+}
+
+.row {
+        padding-bottom: 30px;
+}
+

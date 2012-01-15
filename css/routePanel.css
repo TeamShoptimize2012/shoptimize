@@ -1,0 +1,254 @@
+/**
+ * Style-Regeln die exklusiv für die Ansicht der Routenauswahl verwendet werden.
+ */
+
+#oneStepBack {
+    position: absolute;
+    top: 20px;
+    left: 0px;
+    width: 140px;
+    height: 50px;
+    font: 32px/48px Helvetica, Arial, sans-serif;
+    background-image: url("icons/go-left-48.png");
+    background-position: left center;
+}
+
+
+/* =============================================================================
+   FLOT-related CSS - inner-details for nodes and edges, labels
+   ========================================================================== */
+.flotgraph {
+    width: 700px;
+    height: 170px;
+    position: relative;
+    top: 20px;
+    left: 230px;
+}
+
+.flotgraph .legend {
+    position: absolute;
+    top: -33px;
+    right: 0px;
+}
+
+.flotgraph .legend table{
+    width: 610px;
+    font: 12px/16px "Helvetica", "Arial", sans-serif;
+}
+
+.flotgraph .legend tr{
+    float: left;
+    width: 190px;
+}
+
+.flotgraph .tickLabels {
+    font: 12px/16px "Helvetica", "Arial", sans-serif;
+}
+
+
+/* =============================================================================
+   Routereplay CSS - 
+   ========================================================================== */
+#routereplay {
+    position: absolute;
+    left: 0px;
+    top: 80px;
+    width: 210px;
+    height: 95%;
+    z-index: 15;
+    // overflow: hidden;
+    background-Color: #FFFFFF;
+}
+
+#routereplay .routetablewrapper {
+    // overflow: scroll;
+    padding: 0 10px 0 0;
+    width: 215px;
+}
+
+.nano .content      { padding: 10px; }
+.nano .pane         { background: #444; }
+.nano .pane .slider { background: #111; }
+
+#routereplay table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: 12px/16px "Helvetica", "Arial", sans-serif;
+}
+
+#routereplay tbody {
+    padding: 2px 0 0 0;    
+}
+#routereplay td {
+    padding: 2px;
+}
+
+#routereplay tbody:hover {
+    background-color: #E3E7ED;    
+}
+
+#routereplay .simpleline {
+    border-bottom: 1px solid #CCCCCC;    
+}
+#routereplay .doubleline {
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    height: 3px;
+}
+
+#routereplay .cost {
+    text-align: right; 
+    font-size: 80%;
+}
+
+
+/* Style for Movement */
+#routereplay .movement .walktoshop div.icon {
+    background: url("icons/dl6.png") no-repeat scroll 0 -489px transparent;
+    height: 16px;
+    width: 10px;
+}
+
+#routereplay .movement .walktoshop .cost {
+    color: #333333;
+    visibility: hidden;
+}
+#routereplay .movement .walktoshop td {
+    padding: 2px 2px 2px 20px;
+}
+
+#routereplay .movement:hover .cost {
+    visibility: visible;    
+}
+
+/* Style for Buying */
+#routereplay .payment .buysomething .cost {
+    color: #333333;
+    visibility: hidden;
+}
+#routereplay .payment .buysomething td {
+    padding: 2px 2px 2px 20px;
+}
+
+#routereplay .payment:hover .cost {
+    visibility: visible;    
+}
+
+/* Style for Seperator */
+#routereplay .seperator .cost{
+}
+
+
+/* Style for Summary */
+#routereplay .summary .cost {
+    font-weight: bold;
+    font-size: 100%;    
+}
+
+
+#routereplay .control {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+
+}
+
+#routereplay .control .close {
+    background-position: -80px -208px;    
+    
+}
+
+#routereplay .control .close:hover {
+    cursor: pointer;
+    background-position: -32px -208px;    
+}
+
+
+
+/* =============================================================================
+   JIT-related CSS - inner-details for nodes and edges, labels
+   ========================================================================== */
+#graphframe {
+	position:absolute;
+	width: 700px;
+    height: 400px;
+    top: 200px;
+    left: 230px;
+	z-index:0;
+    border: 2px solid #000;
+}
+
+#infovis {
+	background-color: #FFFFFF;
+	position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+#infovis #infovis-label{
+    font: 12px/16px "Helvetica", "Arial", sans-serif;
+}
+
+#inner-details {
+  max-height: 300px;
+  position: absolute;
+  padding: 0 5px 5px 5px;
+  z-index: 3;
+  max-width: 200px;
+  overflow: hidden;
+}
+
+#inner-details .prices {
+    max-height: 250px;
+    overflow-y: scroll; 
+    width: 210px;   
+}
+
+#inner-details table tr {
+	padding: 2px;	
+}
+
+#inner-details input {
+	border: none;
+	border-bottom: 1px dashed #000;
+	border-radius: 0;	
+}
+#inner-details input:hover {
+    cursor: pointer;    
+}
+
+span.close {
+	color:#FF5555;
+	cursor:pointer;
+	font-weight:bold;
+	margin-left:3px;
+}
+
+span.name {
+  cursor: pointer;
+}
+
+.tip {
+	text-align: left;
+	width:auto;
+	max-width:500px;
+	background-color: #EEEEEE;
+	border: 2px solid #CCCCCC;
+	padding: 10px;
+}
+
+.tip-title {
+  font-size: 11px;
+  text-align:center;
+  margin-bottom:2px;
+
+}
+
+.node {
+	color: #000000;
+	padding: 5px 0;
+}

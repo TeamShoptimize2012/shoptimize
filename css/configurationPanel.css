@@ -1,0 +1,91 @@
+input.configuration{
+	position: absolute;	
+	width: 64px;
+	left: 35%;
+}
+
+label.configuration{
+	position: absolute;
+	left:5%;
+	width: 260px;
+	overflow:hidden;
+    height: 48px;
+    top: 250px; 
+    cursor: pointer;
+    background-color: white;
+    transition: background-color .4s;
+    -moz-transition: background-color .4s;
+    -webkit-transition: background-color .4s;
+    -o-transition: background-color .4s;
+    border-radius: 10px;
+    padding-left: 10px;
+    font: 32px/68px "Helvetica", "Arial", sans-serif;
+    background-position: 10px 10px;
+}
+
+input:hover.configuration{
+    background-color: #EEE;
+    transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
+    -o-transition: background-color .2s;
+   }
+   
+input:focus.configuration{
+    background-color: #EEE;
+    transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
+    -o-transition: background-color .2s;
+   }
+
+#config_choseone {
+	top: 170px;
+	left: 60%;
+	margin-left : -125px;
+    background-image: url("icons/choseone-48.png");
+}
+
+#config_zerotravel {
+	top: 240px;
+	left: 60%;
+	margin-left : -125px;
+    background-image: url("icons/zerotravel-48.png");
+}
+
+#config_largetravel {
+	top: 310px;
+	left: 60%;
+	margin-left : -125px;
+    background-image: url("icons/large-travel-48.png");
+}
+
+#config_findRoute {
+	top: 450px;
+	left: 60%;
+	margin-left : -125px;
+    background-image: url("icons/graph-jit-48.png");
+}
+   
+.configuration.one {top: 170px;}
+.configuration.two {top: 240px;}
+.configuration.three {top: 310px;}
+.configuration.four {top: 380px;}
+.configuration.five {top: 450px;}
+
+input.configuration.one {top: 180px;}
+input.configuration.two {top: 250px;}
+input.configuration.three {top: 320px;}
+input.configuration.four {top: 390px;}
+input.configuration.five {top: 460px;}
+
+
+.configuration#fehlerBox {
+    top: 525px; left: 50%;
+    width: 600px; margin-left: -300px;
+}
+
+.configuration#fehlerBox .fehler {
+    font: 16px/24px "Helvetica", "Arial", sans-serif;
+    color: #C00;
+}
