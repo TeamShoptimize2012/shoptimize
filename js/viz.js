@@ -26,7 +26,7 @@
   Globale Verzögerung für Animationen
   */
 
-  DELAY = 1000;
+  DELAY = 3000;
 
   Shoptimize.startViz = function(data) {
     var s, shops;
@@ -191,7 +191,6 @@
       fahrtKosten = data.allDistances[step.prevLoc][i];
       itemKosten = step.si[i - 1];
       top = parseInt($(".shop.pane.no" + i).css("top"));
-      console.log(top);
       top += $(".shop.pane.no" + i).height();
       left = parseInt($(".shop.pane.no" + i).css("left")) + 10;
       $("<div class='disgraced shopCost no" + i + "'>").hide().appendTo("#vizCanvas").css({
@@ -279,11 +278,13 @@
     _ref = data.history;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       x = _ref[_i];
-      console.log(x);
       purchase += x.si[x.nextLoc - 1];
       travel += x.ci[x.nextLoc - 1];
     }
-    return $("<div class=\"final travelCost\"><i>Wegkosten</i><b>" + (roundCurrency(travel)) + "</b></div>\n<div class=\"final purchaseCost\"><i>Einkauf</i><b>" + (roundCurrency(purchase)) + "</b></div>\n<div class=\"final totalCost\"><i>Gesamtkosten</i><b>" + (roundCurrency(purchase + travel)) + "</b></div>\n").hide().appendTo("#vizCanvas").fadeIn();
+    $("<div class=\"final travelCost\"><i>Wegkosten</i><b>" + (roundCurrency(travel)) + "</b></div>\n<div class=\"final purchaseCost\"><i>Einkauf</i><b>" + (roundCurrency(purchase)) + "</b></div>\n<div class=\"final totalCost\"><i>Gesamtkosten</i><b>" + (roundCurrency(purchase + travel)) + "</b></div>\n").hide().appendTo("#vizCanvas").fadeIn();
+    return $("body").css({
+      cursor: 'pointer'
+    }).on("click", window.top.location.reload);
   };
 
 }).call(this);

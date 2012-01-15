@@ -30,7 +30,17 @@
     });
     explainButton = $("<div class='button iconButton startPanel' id='explainButton'>").hide().appendTo("#vizCanvas").text("Algorithmus erklären").on("click", function() {
       cleanUp();
-      return startViz(sampleData);
+      DemoPanel();
+      return after(1000, function() {
+        $(".demoCase.no1").css({
+          backgroundColor: '#C00'
+        }).click();
+        return after(1000, function() {
+          return $("#explainRoute").css({
+            backgroundColor: '#C00'
+          }).click();
+        });
+      });
     });
     $(".startPanel").fadeIn();
     attachLabel(newButton, "Ein neues Szenario anlegen und durchspielen");

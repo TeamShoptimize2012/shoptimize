@@ -8,6 +8,8 @@
     cursor: pointer;
     background: black; color: white;
     text-align: center;
+
+    display: none;
 }
 
 #vizDebugConf {
