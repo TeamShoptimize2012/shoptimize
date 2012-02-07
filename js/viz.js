@@ -267,7 +267,7 @@
   };
 
   vizDone = function(data) {
-    var purchase, travel, x, _i, _len, _ref;
+    var foobarloc, purchase, travel, x, _i, _len, _ref;
     data.breadCrumbPos++;
     $("<div class='home icon'>").hide().css({
       left: gridPos(data.breadCrumbPos)
@@ -275,12 +275,15 @@
     replaceMessage("Schlussendlich gehen wir wieder <b>zum Startpunkt</b>.");
     purchase = 0;
     travel = 0;
+    foobarloc = 0;
     _ref = data.history;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       x = _ref[_i];
       purchase += x.si[x.nextLoc - 1];
       travel += x.ci[x.nextLoc - 1];
+      foobarloc = x.nextLoc - 1;
     }
+    travel += data.allDistances[0][foobarloc];
     $("<div class=\"final travelCost\"><i>Wegkosten</i><b>" + (roundCurrency(travel)) + "</b></div>\n<div class=\"final purchaseCost\"><i>Einkauf</i><b>" + (roundCurrency(purchase)) + "</b></div>\n<div class=\"final totalCost\"><i>Gesamtkosten</i><b>" + (roundCurrency(purchase + travel)) + "</b></div>\n").hide().appendTo("#vizCanvas").fadeIn();
     return $("body").css({
       cursor: 'pointer'
