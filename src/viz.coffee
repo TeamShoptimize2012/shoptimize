@@ -333,9 +333,12 @@ vizDone = (data) ->
 
     purchase = 0
     travel = 0
+    foobarloc = 0
     for x in data.history
         purchase += x.si[x.nextLoc-1]
         travel += x.ci[x.nextLoc-1]
+        foobarloc = x.nextLoc-1
+    travel += data.allDistances[0][foobarloc]
 
     $("""
          <div class="final travelCost"><i>Wegkosten</i><b>#{roundCurrency(travel)}</b></div>
