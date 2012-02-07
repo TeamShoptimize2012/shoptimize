@@ -1,0 +1,53 @@
+<!DOCTYPE html>  <html> <head>   <title>startPanel.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="anlegenPanel.html">                 anlegenPanel.coffee               </a>                                           <a class="source" href="benchmark.html">                 benchmark.coffee               </a>                                           <a class="source" href="benchmark_greedyparameter.html">                 benchmark_greedyparameter.coffee               </a>                                           <a class="source" href="configurationPanel.html">                 configurationPanel.coffee               </a>                                           <a class="source" href="controlPanel.html">                 controlPanel.coffee               </a>                                           <a class="source" href="demo.html">                 demo.coffee               </a>                                           <a class="source" href="demoPanel.html">                 demoPanel.coffee               </a>                                           <a class="source" href="flot.html">                 flot.coffee               </a>                                           <a class="source" href="floyd.html">                 floyd.coffee               </a>                                           <a class="source" href="gmaps.html">                 gmaps.coffee               </a>                                           <a class="source" href="greedyWorker.html">                 greedyWorker.coffee               </a>                                           <a class="source" href="importPanel.html">                 importPanel.coffee               </a>                                           <a class="source" href="init.html">                 init.coffee               </a>                                           <a class="source" href="jit.html">                 jit.coffee               </a>                                           <a class="source" href="parse.html">                 parse.coffee               </a>                                           <a class="source" href="routePanel.html">                 routePanel.coffee               </a>                                           <a class="source" href="startPanel.html">                 startPanel.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="viz.html">                 viz.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               startPanel.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><strong>startPanel.coffee</strong>
+Das Start-Menü.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize = </span><span class="nb">window</span><span class="p">.</span><span class="nx">Shoptimize</span>
+<span class="nv">root = </span><span class="k">this</span>
+
+<span class="nv">cleanUp = </span><span class="o">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#mouseOver&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.startPanel&quot;</span><span class="p">).</span><span class="nx">fadeOut</span> <span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
+<span class="nv">Shoptimize.StartPanel = </span><span class="o">-&gt;</span>
+    <span class="nx">install</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">Shoptimize</span>
+
+    <span class="nx">replaceMessage</span><span class="p">(</span><span class="s2">&quot;Bitte wählen Sie einen &lt;strong&gt;Menüpunkt&lt;/strong&gt; aus!&quot;</span><span class="p">)</span>
+
+    <span class="nv">newButton = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;button iconButton startPanel&#39; id=&#39;newButton&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Neuer Einkauf&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">cleanUp</span><span class="p">()</span>
+            <span class="nx">AnlegenPanel</span><span class="p">()</span>
+
+    <span class="nv">demoButton = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;button iconButton startPanel&#39; id=&#39;demoButton&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Demo-Szenario laden&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">cleanUp</span><span class="p">()</span>
+            <span class="nx">DemoPanel</span><span class="p">()</span>
+
+    <span class="nv">dataButton = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;button iconButton startPanel&#39; id=&#39;dataButton&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Daten laden&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">cleanUp</span><span class="p">()</span>
+            <span class="nx">ImportPanel</span><span class="p">()</span>
+
+    <span class="nv">explainButton = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div class=&#39;button iconButton startPanel&#39; id=&#39;explainButton&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;Algorithmus erklären&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+            <span class="nx">cleanUp</span><span class="p">()</span>
+            <span class="nx">startViz</span> <span class="nx">sampleData</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.startPanel&quot;</span><span class="p">).</span><span class="nx">fadeIn</span><span class="p">()</span>
+
+    <span class="nx">attachLabel</span> <span class="nx">newButton</span><span class="p">,</span> <span class="s2">&quot;Ein neues Szenario anlegen und durchspielen&quot;</span>
+    <span class="nx">attachLabel</span> <span class="nx">demoButton</span><span class="p">,</span> <span class="s2">&quot;Vorgefertigte Beispiele laden&quot;</span>
+    <span class="nx">attachLabel</span> <span class="nx">dataButton</span><span class="p">,</span> <span class="s2">&quot;Laden Sie Ihre eigenen Daten&quot;</span>
+    <span class="nx">attachLabel</span> <span class="nx">explainButton</span><span class="p">,</span> <span class="s2">&quot;Algorithmus zu visualisieren&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

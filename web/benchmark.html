@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+                <title>shoptimize</title>
+                <!-- CSS -->
+                <link rel="stylesheet" href="css/bootstrap.min.css"/>
+                <link rel="stylesheet" href="css/bootstrap-override.css"/>
+                <!-- Libraries -->
+                <script type="text/javascript">
+                    window.Shoptimize = {}
+                </script>
+
+                <script type="text/javascript" src="js/lib/jquery.js"></script>
+                <script type="text/javascript" src="js/lib/jquery.flot.js"></script>
+                <script type="text/javascript" src="js/lib/seedrandom.js"></script>
+                <script type="text/javascript" src="js/lib/bootstrap-tabs.js"></script>
+                <!-- Logic -->
+                <script type="text/javascript" src="js/benchmark.js"></script>
+                <script type="text/javascript" src="js/parse.js"></script>
+                <script type="text/javascript" src="js/floyd.js"></script>
+                <!-- Data -->
+                <script type="text/javascript" src="js/lib/tpplib.js"></script>
+                <!-- Meta -->
+                <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        </head>
+        <body>
+                <div class="topbar">
+                        <div class="fill">
+                                <div class="container">
+                                        <a class="brand">shoptimize Benchmark</a>
+                                    <ul class="nav">
+                                        <li class=""><a href="benchmark.html">General Benchmark</a></li>
+                                        <li class=""><a href="benchmark_greedyparameter.html">Greedy-Parameter</a></li>
+                                    </ul>
+                                </div>
+                        </div>
+                </div>
+                <div class="container-fluid">
+                        <div class="sidebar">
+                                <h3>Greedy Parameter</h3>
+                                <ul>
+                                        <li>Tendency Article % (TA): <input type="text" class="span3" id="TA" value="100"/></li>
+                                        <li>Additional Articles % (AA): <input type="text" class="span3" id="AA" value="60"/></li>
+                                        <li>Tendency Shop % (TS): <input type="text" class="span3" id="TS" value="30"/></li>
+                                        <li>Early Purchase % (EP): <input type="text" class="span3" id="EP" value="70"/></li>
+                                        <li>Number of Iterations: <input type="text" class="span3" id="numberIterations" value="3"/></li>
+                                </ul>
+                        </div>
+                        <div class="content">
+                                <div class="row">
+                                        <div class="span3">
+                                                <label class="span3" for="testCount">Number of Tests (1-100):</label>
+                                        </div>
+                                        <div class="span3">
+                                                <div class="input">
+                                                        <input class="span2" type="text" id="testCount" value="10"/>
+                                                </div>
+                                        </div>
+                                        <div class="span3">
+                                                <button type="button" id="runGreedy" class="btn primary">Greedy Algorithm</button>
+                                        </div>
+                                </div>
+                                        <ul class="tabs">
+                                                <li class="active"><a href="#qualityGraph">Quality</a></li>
+                                                <li><a href="#runningTimeGraph">Running Time</a></li>
+                                        </ul>
+                                <div class="pill-content">
+                                        <div class="active" id="qualityGraph"></div>
+                                        <div id="runningTimeGraph"></div>
+                                </div>
+                                <div class="row">
+                                        <table id="resultTable">
+                                                <thead>
+                                                        <tr>
+                                                                <th>Test #</th>
+                                                                <th># Shops</th>
+                                                                <th># Articles</th>
+                                                                <th>Optimal Cost</th>
+                                                                <th>Algorithm Cost</th>
+                                                                <th>Algorithm Quality</th>
+                                                                <th>Article Cost</th>
+                                                                <th>Travel Cost</th>
+                                                                <th>Optimal # Markets</th>
+                                                                <th># Visited Markets</th>
+                                                                <th>Running Time</th>
+                                                        </tr>
+                                                </thead>
+                                                <tbody>
+                                                        <tr>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                        </tr>
+                                                </tbody>
+                                        </table>
+                                </div>
+                        </div>
+                </div>
+        </body>
+</html>

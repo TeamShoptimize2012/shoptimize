@@ -1,0 +1,370 @@
+/**
+ * Style-Regeln die nur von der Visualisierung benutzt werden.
+ */
+
+
+.descriptor {
+    position: absolute;
+    top: 58px;
+    height: 24px;
+    font: 14px/24px "Helvetica", "Arial", sans-serif;
+}
+
+.descriptor .travelCost {
+    background: #333; color: #CCC;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    padding-left: 10px;
+    width: 38px;
+    float: left; text-align: right;
+}
+
+.descriptor .arrow {
+    width: 0; height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+
+    margin-right: 6px;
+    border-left: 12px solid #333;
+    float: left;
+}
+
+.descriptor .itemCost {
+    background: #CCC; color: #333;
+    border-radius: 12px;
+    text-align: center;
+    padding-right: 4px;
+}
+
+.priceHighlight {
+    border-radius: 10px;
+    background: #090;
+    color: white;
+}
+
+.shop.pane {
+    width: 180px; height: 68px;
+    position: absolute;
+    top: 150px;
+    background: #eee;
+    border-radius: 10px;
+}
+
+.article.price {
+    width: 90px; height: 48px;
+    padding-right: 10px;
+    position: absolute;
+    font: 24px/48px "Helvetica", "Arial", sans-serif;
+    text-align: right;
+}
+
+#zuendendeIdee, .shopCost {
+    padding: 10px;
+    vertical-align: top;
+
+    position: absolute;
+
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 2px solid #009;
+    border-radius: 10px;
+}
+
+.redArrowDown {
+    position: absolute;
+    width: 48px; height: 48px;
+
+    background-image: url("icons/red-arrow-down-48.png");
+}
+
+.shopCost {
+    width: 134px;
+    height: 90px;
+    font: 24/30px "Helvetica", "Arial", sans-serif;
+    margin-top: -124px;
+}
+
+.shopCost span {
+    display: block;
+    text-align: right;
+    font: 24px/30px "Helvetica", "Arial", sans-serif;
+    padding-bottom: 2px;
+}
+
+.shopCost span:before {
+    position: absolute;
+    display: block;
+    text-align: left;
+    font: 12px/30px "Helvetica", "Arial", sans-serif;
+}
+
+.shopCost .articleCost:before {
+    content: "Artikel: ";
+}
+
+.shopCost .articleCost {
+    
+}
+
+.shopCost .travelCost:before {
+    content: "Wegkosten:";
+}
+
+.shopCost .travelCost {
+    
+}
+
+.shopCost .rank:before {
+    content: "Güte:";
+}
+
+.shopCost .rank {
+    
+}
+
+#zuendendeIdee {
+    top: 180px; left: 50%;
+    width: 622px;
+    padding-left: 68px;
+    background-image: url("icons/light-bulb-48.png");
+    background-position: 10px 10px;
+    margin-left: -350px;
+    text-align: justify;
+    font: 16px/20px "Helvetica", "Arial", sans-serif;
+    cursor: pointer;
+}
+
+/* Canvas-Width: 976 ; 5 * (180 + 10) = 950 */
+
+.shop.pane.no1.of2 { left: 303px; }
+.shop.pane.no2.of2 { left: 493px; }
+
+.shop.pane.no1.of3 { left: 208px; }
+.shop.pane.no2.of3 { left: 398px; }
+.shop.pane.no3.of3 { left: 588px; }
+
+.shop.pane.no1.of4 { left: 113px; }
+.shop.pane.no2.of4 { left: 303px; }
+.shop.pane.no3.of4 { left: 493px; }
+.shop.pane.no4.of4 { left: 683px; }
+
+.shop.pane.no1.of5 { left: 18px; }
+.shop.pane.no2.of5 { left: 208px; }
+.shop.pane.no3.of5 { left: 398px; }
+.shop.pane.no4.of5 { left: 588px; }
+.shop.pane.no5.of5 { left: 778px; }
+
+.shop.icon { top: 160px; }
+
+.shop.icon.no1.of2 { left: 369px; }
+.shop.icon.no2.of2 { left: 559px; }
+
+.shop.icon.no1.of3 { left: 274px; }
+.shop.icon.no2.of3 { left: 464px; }
+.shop.icon.no3.of3 { left: 654px; }
+
+.shop.icon.no1.of4 { left: 179px; }
+.shop.icon.no2.of4 { left: 369px; }
+.shop.icon.no3.of4 { left: 559px; }
+.shop.icon.no4.of4 { left: 749px; }
+
+.shop.icon.no1.of5 { left: 84px; }
+.shop.icon.no2.of5 { left: 274px; }
+.shop.icon.no3.of5 { left: 464px; }
+.shop.icon.no4.of5 { left: 654px; }
+.shop.icon.no5.of5 { left: 844px; }
+
+
+
+.article.bigIcon.of1, .article.bigIcon.of2,
+.article.bigIcon.of3, .article.bigIcon.of4,
+.article.bigIcon.of5 { top: 209px; }
+
+.article.bigIcon.no1.of1 { left: 424px; }
+
+.article.bigIcon.no1.of2 { left: 355px; }
+.article.bigIcon.no2.of2 { left: 493px; }
+
+.article.bigIcon.no1.of3 { left: 286px; }
+.article.bigIcon.no2.of3 { left: 424px; }
+.article.bigIcon.no3.of3 { left: 563px; }
+
+.article.bigIcon.no1.of4 { left: 217px; }
+.article.bigIcon.no2.of4 { left: 355px; }
+.article.bigIcon.no3.of4 { left: 493px; }
+.article.bigIcon.no4.of4 { left: 631px; }
+
+.article.bigIcon.no1.of5 { left: 148px; }
+.article.bigIcon.no2.of5 { left: 286px; }
+.article.bigIcon.no3.of5 { left: 424px; }
+.article.bigIcon.no4.of5 { left: 563px; }
+.article.bigIcon.no5.of5 { left: 700px; }
+
+.article.bigIcon.no1.of10, .article.bigIcon.no2.of10, .article.bigIcon.no3.of10, .article.bigIcon.no4.of10, .article.bigIcon.no5.of10,
+.article.bigIcon.no1.of9,  .article.bigIcon.no2.of9,  .article.bigIcon.no3.of9,  .article.bigIcon.no4.of9,  .article.bigIcon.no5.of10,
+.article.bigIcon.no1.of8, .article.bigIcon.no2.of8, .article.bigIcon.no3.of8, .article.bigIcon.no4.of8,
+.article.bigIcon.no1.of7, .article.bigIcon.no2.of7, .article.bigIcon.no3.of7, .article.bigIcon.no4.of7,
+.article.bigIcon.no1.of6, .article.bigIcon.no2.of6, .article.bigIcon.no3.of6 { top: 150px; }
+
+.article.bigIcon.no6.of10, .article.bigIcon.no7.of10, .article.bigIcon.no8.of10, .article.bigIcon.no9.of10, .article.bigIcon.no10.of10,
+.article.bigIcon.no6.of9,  .article.bigIcon.no7.of9,  .article.bigIcon.no8.of9,  .article.bigIcon.no9.of9,
+.article.bigIcon.no5.of8, .article.bigIcon.no6.of8, .article.bigIcon.no7.of8, .article.bigIcon.no8.of8,
+.article.bigIcon.no5.of7, .article.bigIcon.no6.of7, .article.bigIcon.no7.of7,
+.article.bigIcon.no4.of6, .article.bigIcon.no5.of6, .article.bigIcon.no6.of6 { top: 288px; }
+
+.article.bigIcon.no1.of6 { left: 286px; }
+.article.bigIcon.no2.of6 { left: 424px; }
+.article.bigIcon.no3.of6 { left: 563px; }
+.article.bigIcon.no4.of6 { left: 286px; }
+.article.bigIcon.no5.of6 { left: 424px; }
+.article.bigIcon.no6.of6 { left: 562px; }
+
+.article.bigIcon.no1.of7 { left: 217px; }
+.article.bigIcon.no2.of7 { left: 355px; }
+.article.bigIcon.no3.of7 { left: 493px; }
+.article.bigIcon.no4.of7 { left: 631px; }
+.article.bigIcon.no5.of7 { left: 217px; }
+.article.bigIcon.no6.of7 { left: 355px; }
+.article.bigIcon.no7.of7 { left: 493px; }
+
+.article.bigIcon.no1.of8 { left: 217px; }
+.article.bigIcon.no2.of8 { left: 355px; }
+.article.bigIcon.no3.of8 { left: 493px; }
+.article.bigIcon.no4.of8 { left: 631px; }
+.article.bigIcon.no5.of8 { left: 217px; }
+.article.bigIcon.no6.of8 { left: 355px; }
+.article.bigIcon.no7.of8 { left: 493px; }
+.article.bigIcon.no8.of8 { left: 631px; }
+
+.article.bigIcon.no1.of9 { left: 148px; }
+.article.bigIcon.no2.of9 { left: 286px; }
+.article.bigIcon.no3.of9 { left: 424px; }
+.article.bigIcon.no4.of9 { left: 563px; }
+.article.bigIcon.no5.of9 { left: 700px; }
+.article.bigIcon.no6.of9 { left: 148px; }
+.article.bigIcon.no7.of9 { left: 286px; }
+.article.bigIcon.no8.of9 { left: 424px; }
+.article.bigIcon.no9.of9 { left: 563px; }
+
+.article.bigIcon.no1.of10 { left: 148px; }
+.article.bigIcon.no2.of10 { left: 286px; }
+.article.bigIcon.no3.of10 { left: 424px; }
+.article.bigIcon.no4.of10 { left: 563px; }
+.article.bigIcon.no5.of10 { left: 700px; }
+.article.bigIcon.no6.of10 { left: 148px; }
+.article.bigIcon.no7.of10 { left: 286px; }
+.article.bigIcon.no8.of10 { left: 424px; }
+.article.bigIcon.no9.of10 { left: 562px; }
+.article.bigIcon.no10.of10 { left: 700px; }
+
+.shop.pane.no1:before, .shop.icon.no1:before { content: "1"; }
+.shop.pane.no2:before, .shop.icon.no2:before { content: "2"; }
+.shop.pane.no3:before, .shop.icon.no3:before { content: "3"; }
+.shop.pane.no4:before, .shop.icon.no4:before { content: "4"; }
+.shop.pane.no5:before, .shop.icon.no5:before { content: "5"; }
+
+.article.bigIcon.no1:before  { content: "1"; }
+.article.bigIcon.no2:before  { content: "2"; }
+.article.bigIcon.no3:before  { content: "3"; }
+.article.bigIcon.no4:before  { content: "4"; }
+.article.bigIcon.no5:before  { content: "5"; }
+.article.bigIcon.no6:before  { content: "6"; }
+.article.bigIcon.no7:before  { content: "7"; }
+.article.bigIcon.no8:before  { content: "8"; }
+.article.bigIcon.no9:before  { content: "9"; }
+.article.bigIcon.no10:before { content: "10"; }
+
+.shop.pane:before, .article.bigIcon:before, .shop.icon:before {
+    position: absolute; display: block;
+    background: #333; color: white;
+    text-align: center;
+}
+
+.shop.pane:before, .article.bigIcon:before {
+    width: 32px; height: 32px;
+    border-radius: 16px;
+    bottom: 5px; right: 5px;
+    font: 24px/32px "Helvetica", "Arial", sans-serif;
+}
+
+.shop.pane:before {
+    display: none !important;
+}
+
+.shop.icon:before {
+    width: 20px; height: 20px;
+    border-radius: 10px;
+    bottom: 0; right: 0;
+    font: 12px/20px "Helvetica", "Arial", sans-serif;
+}
+
+.icon.home { background-image: url("icons/home-48.png"); }
+
+.icon.article {
+    top: 300px;
+}
+
+.icon.article.no1 { background-image: url("icons/1-48.png"); }
+.icon.article.no2 { background-image: url("icons/2-48.png"); }
+.icon.article.no3 { background-image: url("icons/3-48.png"); }
+.icon.article.no4 { background-image: url("icons/4-48.png"); }
+.icon.article.no5 { background-image: url("icons/5-48.png"); }
+.icon.article.no6 { background-image: url("icons/6-48.png"); }
+.icon.article.no7 { background-image: url("icons/7-48.png"); }
+.icon.article.no8 { background-image: url("icons/8-48.png"); }
+.icon.article.no9 { background-image: url("icons/9-48.png"); }
+.icon.article.no10 { background-image: url("icons/10-48.png"); }
+
+.bigIcon.article.no1 { background-image: url("icons/1-128.png"); }
+.bigIcon.article.no2 { background-image: url("icons/2-128.png"); }
+.bigIcon.article.no3 { background-image: url("icons/3-128.png"); }
+.bigIcon.article.no4 { background-image: url("icons/4-128.png"); }
+.bigIcon.article.no5 { background-image: url("icons/5-128.png"); }
+.bigIcon.article.no6 { background-image: url("icons/6-128.png"); }
+.bigIcon.article.no7 { background-image: url("icons/7-128.png"); }
+.bigIcon.article.no8 { background-image: url("icons/8-128.png"); }
+.bigIcon.article.no9 { background-image: url("icons/9-128.png"); }
+.bigIcon.article.no10 { background-image: url("icons/10-128.png"); }
+
+.icon.arrowRight  { background-image: url("icons/triangle-right-48.png"); }
+.icon.arrowLeft   { background-image: url("icons/triangle-right-48.png"); }
+.icon.arrowTop    { background-image: url("icons/triangle-right-48.png"); }
+.icon.arrowBottom { background-image: url("icons/triangle-right-48.png"); }
+
+
+.final {
+    position: absolute;
+    top: 200px;
+    text-align: center;
+    left: 50%;
+}
+
+.final b, .final i {
+    display: block;
+    font: 64px/64px "Helvetica", "Arial", sans-serif;
+}
+
+.final i {
+    color: gray;
+    font-size: 24px;
+    line-height: 32px;
+}
+
+.final.travelCost {
+    width: 300px;
+    height: 100px;
+    margin-left: -350px;
+}
+
+.final.purchaseCost {
+    width: 300px;
+    height: 100px;
+}
+
+.final.totalCost {
+    width: 600px;
+    height: 100px;
+    top: 300px;
+    margin-left: -325px;
+}
+
+

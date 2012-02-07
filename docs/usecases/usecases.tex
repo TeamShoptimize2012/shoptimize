@@ -1,0 +1,227 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\usepackage[left=2.5cm, right=3cm]{geometry}              % flexible and complete interface to document dimensions
+\usepackage[latin1]{inputenc}                             % font encoding for umlauts
+\usepackage[ngerman]{babel}                               % language settings
+\usepackage[T1]{fontenc}                                  % T1 font encoding
+\usepackage{amsmath}                                      % AMS mathematical facilities
+%\usepackage{amssymb}                                     % defines symbol names for math symbols in the fonts MSAM and MSBM
+\usepackage[bitstream-charter]{mathdesign}                % mathematical fonts to fit with Bitstream Charter
+\usepackage{courier}                                      % replaces the current typewriter font for Adobe Courier
+\usepackage{listings}                                     % source code printer
+\usepackage{color}                                        % adding colors
+\usepackage{fancyhdr}                                     % extensive control of page headers and footers
+\usepackage{booktabs}                                     % publication quality tables
+\usepackage{xcolor}                                       % driver-independent color extensions   
+\usepackage{tikz}                                         % creating graphics programmatically
+\usepackage{float}                                        % improved interface for floating objects
+\usepackage{subfig}                                       % figures broken into subfigures
+\usepackage{algorithmic}                                  % a suite of tools for typesetting algorithms in pseudo-code.
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}      % floating algorithm environment with algorithmic keywords
+
+\definecolor{lightgray}{rgb}{.95,.95,.95}
+
+\lstset{backgroundcolor=\color{lightgray},
+        basicstyle=\ttfamily\fontsize{9pt}{9pt}\selectfont\upshape,
+				commentstyle=\rmfamily\slshape,
+				keywordstyle=\rmfamily\bfseries\color{black},
+				captionpos=b,
+				showstringspaces=false,
+				breaklines=true,
+				frame=lines,
+				tabsize=2,
+				aboveskip={\baselineskip}
+}
+
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\renewcommand{\labelenumii}{(\alph{enumii})}
+
+\subject{Anwendungsfälle}
+\title{shoptimize}
+\author{Julian Fleischer $\cdot$ Konrad Reiche $\cdot$ Sören Titze $\cdot$ André Zoufahl}
+\date{\today}
+\publishers{\vskip 2ex InformatiCup 2012}
+
+\begin{document}
+
+\pagestyle{fancy}
+\maketitle
+
+\section{Beispieldaten laden}
+
+\begin{tabular}{|c|p{0.7\textwidth}|}
+\hline
+\textbf{Akteure}                & Benutzer, GUI, System\\
+\hline
+\textbf{Anwendungsbereich}      & GUI\\
+\hline
+\textbf{Vorrausetzung}          & Benutzer hat die Seite aufgerufen\\
+\hline
+\textbf{Mindeszusicherung}      & Alle JavaScirpt Bibliotheken wurden erfolgreich geladen\\
+\hline
+\textbf{Zusicherung bei Erfolg} & Die ausgewählten Daten wurden analysiert, geladen und der Benutzer befindet sich im Kontrollbereich\\
+\hline
+\textbf{Haupterfolgsszenario}   & 1. Benutzer klickt auf ``Demo-Szenario laden''\\
+                                & 2. Benutzer wählt eine der Demos aus\\
+                                & 3. System validiert die geladene Demo durch Analyse der Daten\\
+                                & 4. GUI zeigt den Kontrollbereich an.\\
+\hline
+\textbf{Erweiterungen}          & \\
+\hline
+\textbf{Implementierung}        & Die Demos liegen in programmatisch als Zeichenkette vor die wie eine normale Datei analyisiert werden.\\
+\hline
+\textbf{Implementiert?}         & Ja\\
+\hline
+\end{tabular}
+
+\section{Optionen für Szenarien auswählen}
+
+\begin{tabular}{|c|p{0.7\textwidth}|}
+\hline
+\textbf{Akteure}                & Benutzer, GUI, System\\
+\hline
+\textbf{Anwendungsbereich}      & GUI\\
+\hline
+\textbf{Vorrausetzung}          & Benutzer hat die Seite aufgerufen\\
+\hline
+\textbf{Mindeszusicherung}      & Ein Datensatz wurde geladen und der Benutzer befindet sich im Kontrollbereich.\\
+\hline
+\textbf{Zusicherung bei Erfolg} & Das System hat die Konfiguration des Algorithmus geändert.\\
+\hline
+\textbf{Haupterfolgsszenario}   & 1. Benutzer klickt auf ``Einstellungen''\\
+                                & 2. Benutzer wählt die Option ``Wenige Geschäfte'' aus\\
+                                & 3. System liest die angepassten Daten aus\\
+                                & 4. Benutzer klickt auf zurück\\
+\hline
+\textbf{Erweiterungen}          & 2a. Benutzer wählt die Option ``Keine Fahrtkosten'' aus\\
+                                & 2b. Benutzer wählt die Option ``Hohe Fahrtkosten'' aus\\
+\hline
+\textbf{Implementierung}        & Die Szenarienoptionen werden durch die Parameter des Algorithmus umgesetzt.\\
+\hline
+\textbf{Implementiert?}         & Ja\\
+\hline
+\end{tabular}
+
+\section{Individuelle Daten laden}
+
+\begin{tabular}{|c|p{0.7\textwidth}|}
+\hline
+\textbf{Akteure}                & Benutzer, GUI, System\\
+\hline
+\textbf{Anwendungsbereich}      & GUI\\
+\hline
+\textbf{Vorrausetzung}          & Benutzer hat die Seite aufgerufen\\
+\hline
+\textbf{Mindeszusicherung}      & Alle JavaScirpt Bibliotheken wurden erfolgreich geladen\\
+\hline
+\textbf{Zusicherung bei Erfolg} & Die ausgewählten Daten wurden analysiert und geladen\\
+\hline
+\textbf{Haupterfolgsszenario}   & 1. Benutzer klickt auf ``Dateien laden''\\
+                                & 2. Benutzer wählt die ``Fahrtkostendatei`` aus\\
+                                & 3. System validiert die ''Fahrtkostendatei``\\
+                                & 4. Benutzer wählt die ''Artikelpreisedatei`` aus\\
+                                & 5. System validiert die ''Artikelpreisedatei``\\
+                                & 6. GUI blendet eine Schlaffläche ''Weiter`` ein\\
+                                & 7. Benutzer klickt auf ''Weiter``\\
+\hline
+\textbf{Erweiterungen}          & 3a. System findet einen Fehler in der ''Fahrtkostendatei``\\
+                                & 3b. GUI zeigt die Fehlermeldung an.\\
+                                & 4a. System findet einen Fehler in der ''Artikelpreisedatei``\\
+                                & 4b. GUI zeigt die Fehlermeldung an.\\
+                                & 6a. Benutzer modifiziert die Daten im Eingabefeld.\\
+                                & 7a. System validiert die modifizierten Daten aus dem Eingabefeld.\\
+\hline
+\textbf{Implementierung}        & Durch das Modul \emph{parser.coffee} implementiert, die die HTML File API verwendet\\
+\hline
+\textbf{Implementiert?}         & Ja\\
+\hline
+\end{tabular}
+
+\section{Route finden}
+
+\begin{tabular}{|c|p{0.7\textwidth}|}
+\hline
+\textbf{Akteure}                & Benutzer, GUI, System\\
+\hline
+\textbf{Anwendungsbereich}      & GUI\\
+\hline
+\textbf{Vorrausetzung}          & Benutzer hat die Seite aufgerufen\\
+\hline
+\textbf{Mindeszusicherung}      & Der Benutzer hat einen Datensatz geladen.\\
+\hline
+\textbf{Zusicherung bei Erfolg} & Der Benutzer befindet sich im Lösungsbereich und die beste Route wird angezeigt\\
+\hline
+\textbf{Haupterfolgsszenario}   & 1. Benutzer klickt auf ''Route finden``\\
+                                & 2. System startet den Algorithmus\\
+                                & 3. GUI blendet den Lösungsbereich ein\\
+                                & 4. GUI visualisiert die Lösung auf zwei verschiedenen Graphen\\
+                                & 5. GUI blendet eine Schlaffläche ''Zurück`` ein\\
+\hline
+\textbf{Erweiterungen}          & 1a. Benutzer klickt auf ''Einstellungen``\\
+                                & 1b. Benutzer konfiguriert den Algorithmus.\\
+                                & 1c. Benutzer klickt auf ''Route finden``\\
+\hline
+\textbf{Implementierung}        & Der Lösungsbereich ist durch 4 Coffee Script Dateien implementiert: \emph{routePanel.coffee}, \emph{gmaps.coffee}, \emph{flot.coffee}, \emph{jit.coffee}\\
+\hline
+\textbf{Implementiert?}         & Ja\\
+\hline
+\end{tabular}
+
+\section{Mögliche Einkaufsroute auswählen}
+
+\begin{tabular}{|c|p{0.7\textwidth}|}
+\hline
+\textbf{Akteure}                & Benutzer, GUI, System\\
+\hline
+\textbf{Anwendungsbereich}      & GUI\\
+\hline
+\textbf{Vorrausetzung}          & Benutzer hat die Seite aufgerufen\\
+\hline
+\textbf{Mindeszusicherung}      & Benutzer befindet sich im Lösungsbereich.\\
+\hline
+\textbf{Zusicherung bei Erfolg} & Der Benutzer befindet sich im Lösungsbereich und die beste Route wird angezeigt\\
+\hline
+\textbf{Haupterfolgsszenario}   & 1. Benutzer fährt mit der Maus über den oberen Graphen\\
+                                & 2. GUI blendet für jedes Iterationsergebnis in der Nähe der Maus ein Fadenkreuz ein.\\
+                                & 3. GUI markiert im unteren Graphen die vorgeschlagene Route.\\
+                                & 3. Benutzer klickt auf das Fadenkreuz\\
+                                & 4. GUI speichert die Markierung im unteren Graphen.\\
+                                & 5. GUI blendet an der Seite die Details der Route ein.\\
+                                & 6. Benutzer bewegt die Maus über ein Detail der Route im linken Feld.\\
+                                & 7. GUI markiert im unteren Graphen den Teilabschnitt der Route.\\
+\hline
+\textbf{Erweiterungen}          & \\
+\hline
+\textbf{Implementierung}        & Für den unteren Graphen wurde \emph{JavaScript InfoVis Toolkit (JIT)} verwendet, für den oberen Graphen \emph{Flot}. Das Markieren der Route war ursprünglich nicht möglich. Dies wurde durch Implementierung von individuellen Kanten im Graph realisiert.\\
+\hline
+\textbf{Implementiert?}         & Ja\\
+\hline
+\end{tabular}
+
+\section{Algorithmus erklären lassen}
+
+\begin{tabular}{|c|p{0.7\textwidth}|}
+\hline
+\textbf{Akteure}                & Benutzer, GUI, System\\
+\hline
+\textbf{Anwendungsbereich}      & GUI\\
+\hline
+\textbf{Vorrausetzung}          & Benutzer hat die Seite aufgerufen\\
+\hline
+\textbf{Mindeszusicherung}      & Alle JavaScirpt Bibliotheken wurden erfolgreich geladen\\
+\hline
+\textbf{Zusicherung bei Erfolg} & Der Benutzer hat den Algorithmus im groben verstanden.\\
+\hline
+\textbf{Haupterfolgsszenario}   & 1. Benutzer klickt auf ''Algorithmus erklären``\\
+                                & 2. System wählt ein Demobeispiel aus\\
+                                & 3. System analyisiert die Daten der Demo\\
+                                & 4. GUI blendet Animation ein die den Algorithmus erklärt\\
+\hline
+\textbf{Erweiterungen}          & \\
+\hline
+\textbf{Implementierung}        & Die Erklärung des Algorithmus ist dynamisch, d.h. sie funktioniert auf verschiedenen Eingabedaten, jedoch nur bis maximal 5 Geschäfte und 10 Artikel.\\
+\hline
+\textbf{Implementiert?}         & Ja\\
+\hline
+\end{tabular}
+
+\end{document}

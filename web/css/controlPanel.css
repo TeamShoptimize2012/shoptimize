@@ -1,0 +1,27 @@
+/**
+ * Style-Regeln die exklusiv vom Panel zum Starten der Berechnung verwendet werden.
+ */
+
+#explainRoute {
+        position : absolute;
+        left : 50%;
+        top: 390px;
+        margin-left : -125px;
+        background-image: url("icons/learn-48.png");
+}
+
+#findRoute {
+        position : absolute;
+        left : 50%;
+        top: 320px;
+        margin-left : -125px;
+        background-image: url("icons/graph-jit-48.png");
+}
+
+#configureSettings {
+        position : absolute;
+        left : 50%;
+        top: 250px;
+        margin-left : -125px;
+        background-image: url("icons/gears-48.png");
+}

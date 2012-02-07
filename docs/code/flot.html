@@ -1,0 +1,110 @@
+<!DOCTYPE html>  <html> <head>   <title>flot.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="anlegenPanel.html">                 anlegenPanel.coffee               </a>                                           <a class="source" href="benchmark.html">                 benchmark.coffee               </a>                                           <a class="source" href="benchmark_greedyparameter.html">                 benchmark_greedyparameter.coffee               </a>                                           <a class="source" href="configurationPanel.html">                 configurationPanel.coffee               </a>                                           <a class="source" href="controlPanel.html">                 controlPanel.coffee               </a>                                           <a class="source" href="demo.html">                 demo.coffee               </a>                                           <a class="source" href="demoPanel.html">                 demoPanel.coffee               </a>                                           <a class="source" href="flot.html">                 flot.coffee               </a>                                           <a class="source" href="floyd.html">                 floyd.coffee               </a>                                           <a class="source" href="gmaps.html">                 gmaps.coffee               </a>                                           <a class="source" href="greedyWorker.html">                 greedyWorker.coffee               </a>                                           <a class="source" href="importPanel.html">                 importPanel.coffee               </a>                                           <a class="source" href="init.html">                 init.coffee               </a>                                           <a class="source" href="jit.html">                 jit.coffee               </a>                                           <a class="source" href="parse.html">                 parse.coffee               </a>                                           <a class="source" href="routePanel.html">                 routePanel.coffee               </a>                                           <a class="source" href="startPanel.html">                 startPanel.coffee               </a>                                           <a class="source" href="util.html">                 util.coffee               </a>                                           <a class="source" href="viz.html">                 viz.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               flot.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><strong>flot.coffee</strong>
+Ansicht für die Darstellung der berechneten Einkaufsrouten.
+Dies wird mit der Hilfe von JQuery Flot getan.
+Nähere Informationen finden sie <a href="http://code.google.com/p/flot/">hier</a></p>
+
+<p><strong>Shoptimize</strong> ist der globale Kontext, an dem sich jede Seite anmeldet</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize = </span><span class="nb">window</span><span class="p">.</span><span class="nx">Shoptimize</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p><strong>root</strong> wird verwendet als ersatz fuer this verwendet,
+so dass nicht immer this.aufruf erfolgen muss </p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">root = </span><span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Daten die für das Zeichnen des Flot-Graphs benutzt werden </p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">plotdata = </span><span class="p">[]</span>
+<span class="nv">flotgraph_initialized = </span><span class="kc">false</span>
+<span class="nv">flothandle = </span><span class="kc">null</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize.FlotGraph = </span><span class="nf">() -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Hilfsfunktion um den Flotgraphen zu initialisieren</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize.FlotGraph.init = </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>flotgraph_initialized</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">flotgraph_initialized = </span><span class="kc">false</span>
+
+    <span class="nv">flotContainer = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;flotgraph&#39; class=&#39;flotgraph&#39;&gt;&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#vizCanvas&quot;</span><span class="p">))</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>In dieser Methode wird die Datenstruktur die vom Flotgraph verwendet wird aufgebaut</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize.FlotGraph.build_graph_data = </span><span class="nf">(solutions) -&gt;</span>
+    <span class="nv">travel =</span>
+        <span class="nv">label: </span><span class="s2">&quot;Wegkosten&quot;</span>
+        <span class="nv">data: </span><span class="p">[]</span>
+    <span class="nv">purchase =</span>
+        <span class="nv">label: </span><span class="s2">&quot;Ladenkosten&quot;</span>
+        <span class="nv">data: </span><span class="p">[]</span>
+    <span class="nv">total =</span>
+        <span class="nv">label: </span><span class="s2">&quot;Gesamtkosten&quot;</span>
+        <span class="nv">data: </span><span class="p">[]</span>
+    <span class="nv">bestiteration = </span> <span class="mi">0</span>
+    <span class="nv">plotdata = </span><span class="p">[]</span>
+    <span class="nv">x = </span><span class="mi">0</span>
+    <span class="nv">best_cost = </span><span class="nb">Number</span><span class="p">.</span><span class="nx">POSITIVE_INFINITY</span>
+        
+    <span class="k">for</span> <span class="nx">solution</span> <span class="k">in</span> <span class="nx">solutions</span>
+        <span class="nx">travel</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">push</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">solution</span><span class="p">.</span><span class="nx">travel_cost</span><span class="p">]</span>
+        <span class="nx">purchase</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">push</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">solution</span><span class="p">.</span><span class="nx">article_cost</span><span class="p">]</span>
+        <span class="nx">total</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">push</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">solution</span><span class="p">.</span><span class="nx">min_cost</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nx">solution</span><span class="p">.</span><span class="nx">min_cost</span> <span class="o">&lt;</span> <span class="nx">best_cost</span>
+            <span class="nv">best_cost = </span><span class="nx">solution</span><span class="p">.</span><span class="nx">min_cost</span>
+            <span class="nv">bestiteration = </span><span class="nx">x</span>
+        <span class="nx">x</span><span class="o">++</span>
+        
+    <span class="nx">plotdata</span><span class="p">.</span><span class="nx">push</span> <span class="nx">travel</span>
+    <span class="nx">plotdata</span><span class="p">.</span><span class="nx">push</span> <span class="nx">purchase</span>
+    <span class="nx">plotdata</span><span class="p">.</span><span class="nx">push</span> <span class="nx">total</span>
+    <span class="nv">plotdata.bestiteration = </span><span class="nx">bestiteration</span>
+    <span class="k">return</span> <span class="nx">plotdata</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Methode die den Flotgraph initiiert und zeichnet</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Shoptimize.FlotGraph.init_flotgraph = </span><span class="nf">(drop, floydWarshall) -&gt;</span>
+    <span class="nv">options =</span>
+        <span class="nv">series:</span>
+            <span class="nv">lines:</span>
+                <span class="nv">show: </span><span class="kc">true</span>
+        <span class="nv">points:</span>
+            <span class="nv">show: </span><span class="kc">true</span>
+        <span class="nv">grid:</span>
+            <span class="nv">hoverable: </span><span class="kc">true</span>
+            <span class="nv">clickable: </span><span class="kc">true</span>
+        <span class="nv">crosshair:</span>
+            <span class="nv">mode: </span><span class="s2">&quot;x&quot;</span>
+            <span class="nv">color: </span><span class="nx">FLOT_CROSSHAIR_COLOR</span>
+            <span class="nv">lineWidth: </span><span class="mi">2</span>
+        <span class="nv">xaxis:</span>
+            <span class="nv">tickDecimals: </span><span class="mi">0</span>
+            <span class="nv">tickSize: </span><span class="mi">5</span>
+            <span class="nv">ticks: </span><span class="p">[[</span><span class="nx">plotdata</span><span class="p">.</span><span class="nx">bestiteration</span> <span class="p">,</span> <span class="s2">&quot;beste Route&quot;</span><span class="p">]]</span>
+    <span class="nv">placeholder = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#flotgraph&quot;</span><span class="p">)</span>
+    <span class="nv">flothandle = </span><span class="nx">$</span><span class="p">.</span><span class="nx">plot</span><span class="p">(</span><span class="nx">placeholder</span><span class="p">,</span> <span class="nx">plotdata</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+    <span class="nv">legends = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#flotgraph .legendLabel&quot;</span><span class="p">)</span>
+    
+    <span class="nx">legends</span><span class="p">.</span><span class="nx">each</span> <span class="o">=&gt;</span>
+        <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">width</span><span class="p">())</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">flotgraph_initialized</span><span class="p">)</span>
+        <span class="nv">flotgraph_initialized = </span><span class="kc">true</span>
+        
+        <span class="nv">snapToGrid = </span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="o">=&gt;</span>
+            <span class="nv">result =</span>
+                <span class="nv">x: </span><span class="o">-</span><span class="mi">1</span>
+                <span class="nv">y: </span><span class="nx">pos</span><span class="p">.</span><span class="nx">y</span>
+            <span class="nv">diff = </span><span class="nx">pos</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">pos</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">diff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nx">FLOT_CROSSHAIR_SNAP</span>
+                <span class="nv">result.x = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">pos</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span>
+            <span class="nx">result</span>
+
+        <span class="nx">placeholder</span><span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;plotclick&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="o">=&gt;</span>
+            <span class="nv">snapped = </span><span class="nx">snapToGrid</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">snapped</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="nv">item = </span><span class="k">new</span> <span class="nb">Object</span><span class="p">()</span>
+                <span class="nv">item.dataIndex = </span><span class="nx">snapped</span><span class="p">.</span><span class="nx">x</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span>
+                <span class="nx">GoogleMaps</span><span class="p">.</span><span class="nx">loadRouteIntoPlayer</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">dataIndex</span><span class="p">)</span>
+                
+        <span class="nx">placeholder</span><span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;plothover&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="o">=&gt;</span>
+            <span class="nv">forcedPosition = </span><span class="nx">snapToGrid</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nx">forcedPosition</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="nv">pos.x = </span><span class="nx">forcedPosition</span><span class="p">.</span><span class="nx">x</span>
+                <span class="nx">flothandle</span><span class="p">.</span><span class="nx">lockCrosshair</span><span class="p">(</span><span class="nx">forcedPosition</span><span class="p">)</span>
+                <span class="nv">item = </span><span class="k">new</span> <span class="nb">Object</span><span class="p">()</span>
+                <span class="nv">item.dataIndex = </span><span class="nx">forcedPosition</span><span class="p">.</span><span class="nx">x</span>
+            <span class="k">else</span>
+                <span class="nx">flothandle</span><span class="p">.</span><span class="nx">unlockCrosshair</span><span class="p">()</span>
+
+            <span class="nv">suffix = </span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+            <span class="nv">dataset = </span><span class="nx">flothandle</span><span class="p">.</span><span class="nx">getData</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span>
+                <span class="nx">JitGraph</span><span class="p">.</span><span class="nx">highlightSolutionInGraph</span><span class="p">(</span><span class="nx">floydWarshall</span><span class="p">,</span> <span class="nx">RESULTS</span><span class="p">.</span><span class="nx">solutions</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">dataIndex</span><span class="p">],</span> <span class="nx">GRAPH_ROUTE_COLOR</span><span class="p">)</span>
+   
+                <span class="nx">suffix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; = &quot;</span><span class="o">+</span><span class="nx">plotdata</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">dataIndex</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="nx">suffix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; = &quot;</span><span class="o">+</span><span class="nx">plotdata</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">dataIndex</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="nx">suffix</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; = &quot;</span><span class="o">+</span><span class="nx">plotdata</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">dataIndex</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="nv">series = </span><span class="nx">dataset</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+                <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#flotgraph .legendLabel&quot;</span><span class="p">).</span><span class="nx">eq</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">series</span><span class="p">.</span><span class="nx">label</span><span class="o">+</span><span class="nx">suffix</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

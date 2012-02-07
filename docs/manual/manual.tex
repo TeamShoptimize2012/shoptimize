@@ -1,0 +1,175 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\usepackage[left=2.5cm, right=3cm]{geometry} % flexible and complete interface to document dimensions
+\usepackage[latin1]{inputenc} % font encoding for umlauts
+\usepackage[ngerman]{babel} % language settings
+\usepackage[T1]{fontenc} % T1 font encoding
+\usepackage{amsmath} % AMS mathematical facilities
+%\usepackage{amssymb} % defines symbol names for math symbols in the fonts MSAM and MSBM
+\usepackage[bitstream-charter]{mathdesign} % mathematical fonts to fit with Bitstream Charter
+\usepackage{courier} % replaces the current typewriter font for Adobe Courier
+\usepackage{listings} % source code printer
+\usepackage{color} % adding colors
+\usepackage{fancyhdr} % extensive control of page headers and footers
+\usepackage{booktabs} % publication quality tables
+\usepackage{xcolor} % driver-independent color extensions
+\usepackage{tikz} % creating graphics programmatically
+\usepackage{float} % improved interface for floating objects
+\usepackage{subfig} % figures broken into subfigures
+\usepackage{algorithmic} % a suite of tools for typesetting algorithms in pseudo-code.
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e} % floating algorithm environment with algorithmic keywords
+\usepackage{graphicx}
+
+\definecolor{lightgray}{rgb}{.95,.95,.95}
+
+\lstset{backgroundcolor=\color{lightgray},
+        basicstyle=\ttfamily\fontsize{9pt}{9pt}\selectfont\upshape,
+    commentstyle=\rmfamily\slshape,
+    keywordstyle=\rmfamily\bfseries\color{black},
+    captionpos=b,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    tabsize=2,
+    aboveskip={\baselineskip}
+}
+
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\renewcommand{\labelenumii}{(\alph{enumii})}
+
+\subject{Bedienungsaleitung}
+\title{shoptimize}
+\author{Julian Fleischer $\cdot$ Konrad Reiche $\cdot$ Sören Titze $\cdot$ André Zoufahl}
+\date{\today}
+\publishers{\vskip 2ex InformatiCup 2012}
+
+\begin{document}
+
+\pagestyle{fancy}
+\maketitle
+
+\section{Systemvoraussetzungen}
+
+Einer der folgenden Browser:
+
+\begin{itemize}
+\item Firefox (ab Version 8.0)
+\item Chrome (ab Version 16.0)
+\item Safari (ab Version 5.1.2)
+\item Opera (ab Version 11.6)
+\end{itemize}
+
+Es ist anzunehmen, dass auch ältere Browser die volle Funktionalität unterstützen, sie kann aber nur für die oben genannten garantiert werden. Internet Explorer wird wahrscheinlich erst ab Version 10 unterstützt werden.
+
+\section{Installation}
+
+Die Software wird über die Datei \emph{web/index.html} aufgerufen. Da Chrome aus Sicherheitsgründen keine \emph{Web Worker}\footnotemark unterstützt wenn HTML Seiten lokal geöffnet werden, sollte im Zweifelsfall der gesamte \emph{web} Ordner online zur Verfügung gestellt werden, zum Beispiel auf einem Webserver. Alternativ kann auch folgende URL aufgerufen werden:
+
+\footnotetext{https://developer.mozilla.org/En/Using\_web\_workers}
+
+\begin{center}
+http://teamshoptimize.github.com/shoptimize
+\end{center}
+
+\section{Bedienungsanleitung}
+
+\subsection{Shoptimize - Hauptsoftware}
+
+Die Software kann grob in 4 Teile unterteilt werden. \\
+\begin{description}
+    \item [Dateneingabe] Im ersten Schritt hat Der Nutzer 3 Möglichkeiten Daten zu Artikeln und Geschäften anzulegen
+    \item [Algorithmus einstellen] Danach können optional Parameter für den Algorithmus eingestellt werden
+    \item [Routen betrachten] Die Software wird mehrere mögliche Routen anbieten und genaue Wegbeschreibungen anbieten
+    \item [Algorithmus verstehen] Als entkoppeltes Feature hat der Nutzer die Möglichkeit in einer kleine Demo zu verstehen, was genau der Algorithmus macht
+\end{description}
+Folgend gibt es eine kleine Übersicht, welche Wege es gibt, sich in der Software zu navigieren.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=15cm]{images/flow.pdf}
+\caption{Wege durch die Anwendung}
+\label{fig1-flow}
+\end{figure}
+
+\paragraph{Startseite und Dateneingabe}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/1_startseite.png}
+\caption{Startseite}
+\label{fig:a}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/2_eigenedaten.png}
+\caption{Eigene Daten definieren}
+\label{fig:b}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/2_datenladen.png}
+\caption{Dateien laden}
+\label{fig:c}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/2_demoszenarien.png}
+\caption{Demos laden}
+\label{fig:d}
+\end{figure}
+
+Auf Startseite hat der Nutzer die Möglichkeit Daten zu definieren um eine optimale Route zu finden. Dabei hat der Nutzer die Wahl ob er komplett eigene Daten definieren möchte. Es können eigene Geschäfte angelegt werden sowie die Artikel genau beschrieben werden. Diese Art der Eingabe ist jedoch für kleine Datenmengen vorgesehen und ist daher beschränkt auf maximal 5 Geschäfte und maximal 10 Artikel.(Abbildung \ref{fig:b})\\
+Für größere Eingaben gibt es die Möglichkeit Textdateien zu laden. Diese Dateien müssem den Formatvorlagen der G.I. entsprechen und können ggf. angepasst werden, jedoch nur als einfachs Textfeld. (Abbildung \ref{fig:c}) \\
+Als dritte und letzte Möglichkeit kann man aus vordefinierten Demoszenarien wählen. Dabei sind u.A. die von der G.I. bereitgestellten Beispiele und Beispiele aus dem Designdokument zur Auswahl. (Abbildung \ref{fig:d}) \\
+Alternativ dazu kann sich der Nutzer auch einen Überblick darüber verschaffen, wie genau der gierige Algorithmus arbeitet um spätere Routen besser zu verstehen. 
+
+\paragraph{Optionen einstellen}
+Sobald die Daten geladen sind kann der Nutzer sofort nach einer Route suchen, indem er auf 'Route finden' klickt. Dadurch werden die Standardparameter für den Algorithmus verwendet und er wird direkt zur Routenübersicht geleitet. \\
+Erfahrene Nutzer haben zusätzlich die Möglichkeit die Parameter selber einzustellen, um ggf. eine bessere Route zu erhalten. Über 'Einstellungen' können danach entweder die Parameter einzeln und direkt eingestellt werden. (Abbildung \ref{fig:e}) \\
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/3_controladvanced.png}
+\caption{Eigene Parameter einstellen}
+\label{fig:e}
+\end{figure}
+
+\paragraph{Ergebnisse darstellen}
+Durch Auslösen der Routenfindung wird automatisch die Routenübersicht angezeigt. Diese Seite ist in 3 Bereiche eingeteilt, wobei 2 beim Betreten bereits genutzt werden. Im oberen Bereich sind mögliche Routen dargestellt. Jede Spalte entspricht einer Route, wobei die 3 Punkte Artikel- und Wegkosten darstellen, sowie die Gesamtkosten. Die aktuell beste Route wird ebenfalls durch eine Markierung am unteren Rand hervorgehoben. Im unteren rechten Bereich ist das eingegebene Wegnetz dargestellt. Dabei werden nur direkt vorhandene Kanten dargestellt, die Kantendicke spiegelt hierbei die Kosten zw. 2 Geschäften wieder. Durch Drag-und-Drop der Knoten kann der Graph nach belieben sortiert werden. (Abbildung \ref{fig:f})\\
+Der linke Bereich bleibt zunächst leer, er dient im folgenden um eine detailierte Wegbeschreibung einer Route zu erhalten. Diese kann der Nutzer erhalten, sobald er eine mögliche Route im oberen Graph auswählt. Dazu reicht es in die Nähe einer Lösung mit der Maus zu sein und es wird im Graph die Route angezeigt, sowie Kosten ausgegeben. \\ 
+Durch einen Klick auf eine Lösung wird schließlich der linke Bereich genutzt um in Worten zu beschreiben, wie die Route abzulaufen ist. Durch Rüberfahren über die einzelnen Blöcke links werden ebenfalls Kanten hervorgehoben bzw. die Zusammensetzung der Kosten dargestellt.(Abbildung \ref{fig:g}) \\
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/4_route.png}
+\caption{Beim Betreten der Seite}
+\label{fig:f}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/4_routedetail.png}
+\caption{Nachdem eine Lösung geladen wurde}
+\label{fig:g}
+\end{figure}
+
+\paragraph{Erklärung zum Algorithmus}
+Um genauer zu verstehen wie der Algorithmus vorgeht, bieten wir dem Nutzer an, für seine Testdaten die Basisheuristik durchzugehen. Dies wird jedoch nur für Daten erlaubt, die aus maximal 5 Geschäften und maximal 10 Artikeln bestehen. Dabei werden die 3 Grundschritte des Algorithmus Schritt für Schritt erklärt. (Abbildung \ref{fig:h})\\
+Dabei läuft die Animation automatisch ab, sodass der Nutzer nur folgen brauch. Im ersten Durchlauf gibt es noch zu Beachten, dass ein Schritt die Animation unterbricht. In diesem Schritt wird die Animation angehalten um dem Nutzer zu ermöglich, die Rechnung nachzuvollziehen. Durch einen Klick auf die Nachricht wird die Animation fortgesetzt. (Abbildung \ref{fig:i})\\
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/5_erklaerbaer.png}
+\caption{Vorauswahl der Artikel}
+\label{fig:h}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{images/5_erklaerbaeridee.png}
+\caption{Nachdem eine Lösung geladen wurde}
+\label{fig:i}
+\end{figure}
+
+\end{document}

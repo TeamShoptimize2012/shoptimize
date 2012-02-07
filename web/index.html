@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html id="htmlElement">
+<head>
+    <meta charset="utf-8" />
+
+    <title>shoptimize</title>
+
+    <!-- Grundlegende Style-Informationen die verfügbar sein sollen auch wenn
+         andere Dateien nicht geladen werden. Vor allen Dingen für die Warnungen
+         zu Beginn wichtig, alles andere ist in externen Dateien oder wird von
+         der Programm-Logik erstellt bzw. initialisiert.  -->
+    <style type="text/css">
+
+* { margin: 0; padding: 0; } /* Wir machen das alles selbst */
+#vizNoJs, #vizLoading, #vizBrowserWarning {
+    position: absolute; position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    color: #FFF;
+}
+#vizNoJs { /* WARNUNG! Rot. Aber kein ätzendes, daher #900 */
+    background: #900; color:
+}
+#vizLoading { /* Lädt. Seichtes schwarz. */
+    background: #111;
+}
+#vizBrowserWarning { /* Sorry Internet Explorer. */
+    background: #009;
+}
+#vizNoJs p, #vizLoading p, #vizBrowserWarning p {
+    position: absolute; top: 45%; left: 50%;
+    margin-left: -350px; width: 700px; height: 30px;
+    display: block; text-align: center;
+    font: 25px/30px "Helvetica", "Arial", sans-serif;
+}
+    </style>
+
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/core.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/viz.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/debug.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/common.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/startPanel.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/importPanel.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/anlegenPanel.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/demoPanel.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/controlPanel.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/configurationPanel.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/routePanel.css" />
+    <link rel="stylesheet" type="text/css" charset="utf-8" href="css/nanoscroller.css" />
+
+</head>
+<body id="bodyElement">
+
+<div id="vizCanvas">
+    <!-- Hier drin spielt sich alles ab.
+         Die Elemente im vizCanvas werden allerdings alle von der Programmlogik
+         erstellt. Lediglich allgemeine Styles (Farben, Icons, etc.) werden via
+         CSS in "css/core.css" festgelegt. In "css/debug.css" befinden sich Style-Rules
+         um die Dokument-Struktur hervorzuheben. -->
+</div>
+
+<div id="vizLoading">
+    <!-- Dieser DIV wird angezeigt, wenn JavaScript aktiviert ist, das
+         Dokument aber noch nicht fertig geladen wurde. Er wird ondocumentready
+         entfernt und gibt dann die eigentliche GUI frei. -->
+    <p>shoptimize lädt...</p>
+</div>
+<div id="vizNoJs">
+    <!-- Dieser DIV liegt ganz oben auf. -->
+    <p>Bitte aktivieren Sie JavaScript!</p>
+</div>
+<!--[if lte IE 9]>
+<div id="vizBrowserWarning">
+    <p>
+        Internet Explorer 9 und niedriger unterstützen leider einige benötigte Features nicht.<br />
+        <small>Diese Seite benötigt die HTML5 FileAPI und WebWorker.</small>
+    </p>
+</div>
+<![endif]-->
+<script type="text/javascript">
+    // Das globale Shoptimize-Objekt wird hier initialisiert.
+    // Ihm werden Funktionen und Daten durch die nachfolgenden
+    // Skripte einfach angehängt werden.
+    window.Shoptimize = {}
+
+    // Wenn JS aktiviert ist, einfach die oben aufliegende Warnung entfernen.
+    document.getElementById('bodyElement').removeChild(document.getElementById('vizNoJs'))
+
+    // Danach wird nur noch der "Shoptimize lädt..." Bildschirm oben aufliegen,
+    // dieser wird ondocumentready dann entfernt und gibt die fertige GUI frei.
+
+    // Opera Fix:
+    if (!Object.keys) Object.keys = function(o){
+         if (o !== Object(o))
+              throw new TypeError('Object.keys called on non-object')
+         var ret=[], p
+         for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) ret.push(p)
+         return ret
+    }
+</script>
+
+<!-- Bibliotheken - Zuerst laden, sonst läuft nichts. -->
+<!--<script type="text/javascript" src="js/lib/coffee-script.js"></script>-->
+<script type="text/javascript" src="js/lib/jquery.js"></script>
+<script type="text/javascript" src="js/lib/jquery.flot.js"></script>
+<script type="text/javascript" src="js/lib/jquery.flot.crosshair.js"></script>
+<script type="text/javascript" src="js/lib/jquery.nanoscroller.min.js"></script>
+
+<script type="text/javascript" src="js/lib/jit.js"></script>
+<script type="text/javascript" src="js/lib/jit-yc.js"></script>
+<script type="text/javascript" src="js/lib/paper.js"></script>
+<script type="text/javascript" src="js/lib/seedrandom.js"></script>
+
+<!-- Haupt-Programm-Logik - Kernfunktionen, die von allen Modulen benutzt werden -->
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/floyd.js"></script>
+<script type="text/javascript" src="js/demo.js"></script>
+<script type="text/javascript" src="js/parse.js"></script>
+
+<!-- Menüführung der einezlnen Panels - kreiert die eigentliche GUI und Menüführung -->
+<script type="text/javascript" src="js/startPanel.js"></script>
+<script type="text/javascript" src="js/importPanel.js"></script>
+<script type="text/javascript" src="js/demoPanel.js"></script>
+<script type="text/javascript" src="js/anlegenPanel.js"></script>
+<script type="text/javascript" src="js/controlPanel.js"></script>
+<script type="text/javascript" src="js/configurationPanel.js"></script>
+<script type="text/javascript" src="js/routePanel.js"></script>
+<script type="text/javascript" src="js/flot.js"></script>
+<script type="text/javascript" src="js/jit.js"></script>
+<script type="text/javascript" src="js/gmaps.js"></script>
+
+<!-- Die Visualisierung -->
+<script type="text/javascript" src="js/viz.js"></script>
+
+<!-- Der Haupt-Einstiegspunkt: in init.coffe befindet sich
+     <code>$ -></code> (ondocumentready) -->
+<script type="text/javascript" src="js/init.js"></script>
+
+</body>
+</html>
